@@ -1,7 +1,6 @@
-Feature: Is it Friday yet?
-  Everybody wants to know when it's Friday
+Feature: Comprar productos
 
-  Scenario: Sunday isn't Friday
-    Given today is Sunday
-    When I ask whether it's Friday yet
-    Then I should be told "Nope"
+  Scenario: Comprar un producto con stock
+    Given existen productos
+    When compro el producto "Arroz 1Kg"
+    Then el sistema guarda la compra
