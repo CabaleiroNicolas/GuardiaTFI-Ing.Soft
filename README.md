@@ -1,5 +1,5 @@
 <p color=white align="center">
-  <img src="https://frro.cvg.utn.edu.ar/theme/image.php/snap/theme/1710991180/img/logo" width="500" alt="UTN Logo"/>
+  <img src="https://www.frsf.utn.edu.ar/utnabierta/imagenes/logo-utn.svg" width="500" alt="UTN Logo"/>
 </p>
 
 ## Description
