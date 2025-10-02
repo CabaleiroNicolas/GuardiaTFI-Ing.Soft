@@ -4,7 +4,7 @@ Given('existen productos', () => {
     return 'pending';
 });
 
-When('compro el producto {string}', (string) => {
+When('compro el producto {string}', (string) => {    
     return 'pending';
 });
 
