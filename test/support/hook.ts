@@ -3,13 +3,13 @@
 import { BeforeAll, AfterAll, Before } from '@cucumber/cucumber';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../../src/app.module';
 
 export let app: INestApplication;
 //let dataSource: DataSource;
 
 BeforeAll(async () => {
-    
+  console.log('--- BeforeAll hook ---');
   // Carga variables de entorno de test
   process.env.NODE_ENV = 'test';
 
