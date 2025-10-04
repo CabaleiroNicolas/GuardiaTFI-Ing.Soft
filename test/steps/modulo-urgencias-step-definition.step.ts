@@ -1,6 +1,8 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from 'chai';
 
+// Variables para simular la base de datos y el sistema
+// (En un entorno real, estas serían gestionadas por servicios y repositorios)
 let pacientesEnEspera: any[] = [];
 let pacientesRegistrados: any[];
 let paciente;
