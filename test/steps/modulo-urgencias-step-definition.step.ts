@@ -7,6 +7,9 @@ let pacientesEnEspera: any[] = [];
 let pacientesRegistrados: any[];
 let paciente;
 let datosIngreso;
+
+const ordenNiveles = ["Critica", "Emergencia", "Urgencia", "Urgencia Menor", "Sin Urgencia"];
+
 let ingresoServicio = {
     registrar: (ingreso, frecCardiaca: number, frecRespiratoria: number) => {
 
@@ -17,8 +20,21 @@ let ingresoServicio = {
         return "ERROR: El valor de la frecuencia respiratoria no puede ser negativo"
 
       pacientesEnEspera.push(ingreso);
+      pacientesEnEspera = ingresoServicio.ordenarLista(pacientesEnEspera);
+    
       return "El ingreso se registró con éxito!";
-  }
+  },
+  
+    ordenarLista: (colaEspera: any[]) => {
+        colaEspera.sort((ingreso1, ingreso2) => {
+          const nivel1 = ordenNiveles.indexOf(ingreso1.nivelEmergencia);
+          const nivel2 = ordenNiveles.indexOf(ingreso2.nivelEmergencia);
+
+          return nivel1 - nivel2;
+        })
+        // console.log(colaEspera);
+        return colaEspera;
+    },
 }
 
 Given('los pacientes registrados con los siguientes datos:', (dataTable) => {
@@ -35,15 +51,17 @@ When('el paciente ingresa a urgencias con los siguientes datos:', (dataTable) =>
 });
 
 Then('se registra el ingreso del paciente a la cola con estado: Pendiente y hora actual {string}', (horaActual) => {
-    const estado = 'Pendiente';
-    pacientesEnEspera.push(
-        {
-            dni: paciente.dni,
-            nombre: paciente.nombre,
-            nivelEmergencia: datosIngreso.nivelEmergencia,
-            estado,
-            horaIngreso: horaActual
-        });
+    const ingreso = {
+      dni: paciente.dni,
+      nombre: paciente.nombre,
+      nivelEmergencia: datosIngreso.nivelEmergencia,
+      estado: "Pendiente",
+      horaIngreso: "10:45"
+    };
+    let frecCardiaca = datosIngreso.frecuenciaCardiaca;
+    let frecRespiratoria = datosIngreso.frecuenciaRespiratoria;
+
+    ingresoServicio.registrar(ingreso, frecCardiaca, frecRespiratoria);
 });
 
 Then('la cola de espera de pacientes es:', (dataTable) => {
