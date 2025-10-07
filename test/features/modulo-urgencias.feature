@@ -34,6 +34,14 @@ Como enfermera Quiero poder registrar las admisiones de los pacientes a urgencia
     Then se registra el nuevo paciente
 
 
+
+  Scenario: Ingreso a urgencias de paciente existente con datos incompletos
+    When el paciente ingresa a urgencias con los siguientes datos:
+      | dni      | informe         | nivelEmergencia | temperatura | frecuenciaCardiaca | frecuenciaRespiratoria | tensionArterial |
+      | 12345678 | Dolor abdominal | Sin Urgencia    |         |                 72 |                     16 |          120/80 |
+    Then debo ver un mensaje de error "ERROR: Hay campos sin completar"
+
+
   
   Scenario: Ingreso de paciente cargando frecuencia cardíaca con valor negativo
     When el paciente ingresa a urgencias con los siguientes datos:
