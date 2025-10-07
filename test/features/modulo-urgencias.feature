@@ -76,3 +76,19 @@ Como enfermera Quiero poder registrar las admisiones de los pacientes a urgencia
       | dni      | nombre      | nivelEmergencia | estado    | horaIngreso |
       | 87654321 | María López | Urgencia        | Pendiente |       10:30 |
       | 12345678 | Juan Pérez  | Urgencia Menor  | Pendiente |       10:45 |
+
+  
+  Scenario: Ingreso de paciente con igual nivel de emergencia
+    Given el sistema tiene la siguiente cola de pacientes en espera:
+      | dni      | nombre      | nivelEmergencia | estado    | horaIngreso |
+      | 87654321 | María López | Urgencia        | Pendiente |       10:30 |
+      | 22222222 | Carlos Ruiz | Sin Urgencia    | Pendiente |       10:20 |
+    When el paciente ingresa a urgencias con los siguientes datos:
+      | dni      | informe         | nivelEmergencia | temperatura | frecuenciaCardiaca | frecuenciaRespiratoria | tensionArterial |
+      | 12345678 | Dolor abdominal | Urgencia       |        36.6 |                72 |                     16 |          120/80 |
+    Then se registra el ingreso del paciente a la cola con estado: Pendiente y hora actual "10:45"
+    And la cola de espera de pacientes es:
+      | dni      | nombre      | nivelEmergencia | estado    | horaIngreso |
+      | 87654321 | María López | Urgencia        | Pendiente |       10:30 |
+      | 12345678 | Juan Pérez  | Urgencia        | Pendiente |       10:45 |
+      | 22222222 | Carlos Ruiz | Sin Urgencia    | Pendiente |       10:20 |
