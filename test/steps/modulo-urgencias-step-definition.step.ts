@@ -7,6 +7,19 @@ let pacientesEnEspera: any[] = [];
 let pacientesRegistrados: any[];
 let paciente;
 let datosIngreso;
+let ingresoServicio = {
+    registrar: (ingreso, frecCardiaca: number, frecRespiratoria: number) => {
+
+      if (frecCardiaca < 0)
+        return "ERROR: El valor de la frecuencia cardíaca no puede ser negativo"
+    
+      if (frecRespiratoria < 0)
+        return "ERROR: El valor de la frecuencia respiratoria no puede ser negativo"
+
+      pacientesEnEspera.push(ingreso);
+      return "El ingreso se registró con éxito!";
+  }
+}
 
 Given('los pacientes registrados con los siguientes datos:', (dataTable) => {
     pacientesRegistrados = dataTable.hashes();
@@ -55,3 +68,21 @@ Then('se registra el nuevo paciente', () => {
     expect(paciente).to.not.be.undefined;
 });
 
+// Scenario: Ingreso de paciente cargando frecuencia cardíaca con valor negativo
+
+Then('debo ver un mensaje de error {string}', function (mensajeErrorEsperado) {
+    const ingreso = {
+      dni: paciente.dni,
+      nombre: paciente.nombre,
+      nivelEmergencia: datosIngreso.nivelEmergencia,
+      estado: "Pendiente",
+      horaIngreso: "10:45"
+    };
+  
+    let frecCardiaca = datosIngreso.frecuenciaCardiaca;
+    let frecRespiratoria = datosIngreso.frecuenciaRespiratoria;
+
+    let mensaje = ingresoServicio.registrar(ingreso, frecCardiaca, frecRespiratoria);
+  
+    expect(mensaje).to.be.equal(mensajeErrorEsperado);
+});
