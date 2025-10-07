@@ -8,10 +8,13 @@ let pacientesRegistrados: any[];
 let paciente;
 let datosIngreso;
 let ingresoServicio = {
-    registrar: (ingreso, frecCardiaca: number) => {
+    registrar: (ingreso, frecCardiaca: number, frecRespiratoria: number) => {
 
       if (frecCardiaca < 0)
         return "ERROR: El valor de la frecuencia cardíaca no puede ser negativo"
+    
+      if (frecRespiratoria < 0)
+        return "ERROR: El valor de la frecuencia respiratoria no puede ser negativo"
 
       pacientesEnEspera.push(ingreso);
       return "El ingreso se registró con éxito!";
@@ -77,8 +80,9 @@ Then('debo ver un mensaje de error {string}', function (mensajeErrorEsperado) {
     };
   
     let frecCardiaca = datosIngreso.frecuenciaCardiaca;
+    let frecRespiratoria = datosIngreso.frecuenciaRespiratoria;
 
-    let mensaje = ingresoServicio.registrar(ingreso, frecCardiaca);
+    let mensaje = ingresoServicio.registrar(ingreso, frecCardiaca, frecRespiratoria);
   
     expect(mensaje).to.be.equal(mensajeErrorEsperado);
 });
