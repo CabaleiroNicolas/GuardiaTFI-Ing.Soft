@@ -1,9 +1,4 @@
-export class TensionArterial {
+export interface TensionArterial {
   frecSistolica: number;
   frecDiastolica: number;
-
-  constructor(frecSistolica: number, frecDiastolica: number) {
-    this.frecSistolica = frecSistolica;
-    this.frecDiastolica = frecDiastolica;
-  }
 }

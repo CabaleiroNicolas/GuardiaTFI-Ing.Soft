@@ -1,7 +1,7 @@
 export enum NivelEmergencia {
-  CRITICO,
-  EMERGENCIA,
-  URGENCIA,
-  URGENCIA_MENOR,
-  SIN_URGENCIA
+  CRITICO = "Critica",
+  EMERGENCIA = "Emergencia",
+  URGENCIA = "Urgencia",
+  URGENCIA_MENOR = "Urgencia Menor",
+  SIN_URGENCIA = "Sin Urgencia"
 }
