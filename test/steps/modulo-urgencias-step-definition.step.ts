@@ -1,82 +1,30 @@
 import { Given, When, Then, Before } from '@cucumber/cucumber';
 import { expect } from 'chai';
+import { Ingreso } from 'src/modules/urgencias/domain/entities/ingreso.entity';
+import { Paciente } from 'src/modules/urgencias/domain/entities/paciente.entity';
+import { Domicilio } from 'src/modules/urgencias/domain/value-objects/domicilio.vo';
+import { NivelEmergencia } from 'src/modules/urgencias/domain/value-objects/nivel-emergencia.vo';
+import { SignosVitales } from 'src/modules/urgencias/domain/value-objects/signos-vitales.vo';
+import { CustomWorld } from 'test/support/world';
 
 Before((scenario) => {
   console.log(`\n\nSCENARIO: ${scenario.pickle.name}`);
 });
 
-// Variables para simular la base de datos y el sistema
-// (En un entorno real, estas serían gestionadas por servicios y repositorios)
-let pacientesEnEspera: any[] = [];
-let pacientesRegistrados: any[];
-let paciente;
-let datosIngreso;
-let signosVitales;
-let ingreso = {
-  paciente,
-  signosVitales,
-  informe: "",
-  nivelEmergencia: "",
-  estado: "Pendiente",
-  horaActual: ""
-};
-
-const ordenNiveles = ["Critica", "Emergencia", "Urgencia", "Urgencia Menor", "Sin Urgencia"];
-
-// Simulacion de servicio para posterior implementacion
-let ingresoServicio = {
-  registrar: (ingreso) => {
-
-    try {
-      ingresoServicio.comprobarCampos(ingreso);
-    }
-    catch (error) {
-      return error.message;
-    }
-
-    const infoPaciente = {
-      dni: ingreso.paciente.dni,
-      nombre: ingreso.paciente.nombre,
-      nivelEmergencia: ingreso.nivelEmergencia,
-      estado: ingreso.estado,
-      horaIngreso: ingreso.horaActual
-    }
-
-    pacientesEnEspera.push(infoPaciente);
-    pacientesEnEspera = ingresoServicio.ordenarLista(pacientesEnEspera);
-
-    return "El ingreso se registró con éxito!";
-  },
-
-  ordenarLista: (colaEspera: any[]) => {
-    colaEspera.sort((ingreso1, ingreso2) => {
-      const nivel1 = ordenNiveles.indexOf(ingreso1.nivelEmergencia);
-      const nivel2 = ordenNiveles.indexOf(ingreso2.nivelEmergencia);
-
-      return nivel1 - nivel2;
-    })
-
-    return colaEspera;
-  },
-
-  comprobarCampos: (ingreso) => {
-    const signosVitales = ingreso.signosVitales;
-    const tensionArterial = signosVitales.tensionArterial;
-
-    if (!signosVitales.temperatura || !signosVitales.frecCardiaca || !signosVitales.frecRespiratoria || !tensionArterial.frecSistolica || !tensionArterial.frecDiastolica || !ingreso.informe || !ingreso.nivelEmergencia)
-      throw new Error("ERROR: Hay campos sin completar");
-
-    if (signosVitales.frecCardiaca < 0)
-      throw new Error("ERROR: El valor de la frecuencia cardíaca no puede ser negativo");
-
-    if (signosVitales.frecRespiratoria < 0)
-      throw new Error("ERROR: El valor de la frecuencia respiratoria no puede ser negativo");
-  }
-}
 
 // BACKGROUND
-Given('los pacientes registrados con los siguientes datos:', (dataTable) => {
-  pacientesRegistrados = dataTable.hashes();
+Given('los pacientes registrados con los siguientes datos:', function (this: CustomWorld, dataTable) {
+  const pacientes = dataTable.hashes();
+
+  for (const p of pacientes) {
+    const domicilio: Domicilio = {
+      calle: p.calle,
+      numero: p.numero,
+      localidad: p.localidad
+    };
+    const paciente = new Paciente(p.dni, p.apellido, p.nombre, domicilio);
+    this.pacienteServicio.registrar(paciente);
+  }
 });
 
 
@@ -85,56 +33,74 @@ Given('los pacientes registrados con los siguientes datos:', (dataTable) => {
 // SCENARIO: Ingreso de paciente con menor nivel de emergencia
 // SCENARIO: Ingreso de paciente con igual nivel de emergencia
 
-Given('el sistema tiene la siguiente cola de pacientes en espera:', (dataTable) => {
-  pacientesEnEspera = dataTable.hashes();
+Given('el sistema tiene la siguiente cola de pacientes en espera:', function (this: CustomWorld, dataTable) {
+  const ingresos = dataTable.hashes();
+
+  for (const i of ingresos) {
+    const paciente = this.pacienteServicio.buscar(i.cuil);
+    const nivelEmergencia: NivelEmergencia = NivelEmergencia[i.nivelEmergencia];
+    const hora = i.horaIngreso.split(":")[0] as number;
+    const minutos = i.horaIngreso.split(":")[1] as number;
+    const fecha = new Date(2025, 10, 13, hora, minutos);
+    const ingreso = new Ingreso(paciente!, fecha, "", nivelEmergencia, this.signosVitalesMock);
+    
+    this.ingresoServicio.registrar(ingreso);
+  }
 });
 
-When('el paciente ingresa a urgencias con los siguientes datos:', (dataTable) => {
-  datosIngreso = dataTable.hashes()[0];
-  paciente = pacientesRegistrados.find(p => p.dni === datosIngreso.dni);
+When('el paciente ingresa a urgencias con los siguientes datos:', function (this: CustomWorld, dataTable) {
+  this.datosIngreso = dataTable.hashes()[0];
+  this.nivelEmergencia = NivelEmergencia[this.datosIngreso.nivelEmergencia];
+  this.paciente = this.pacienteServicio.buscar(this.datosIngreso.cuil);
 });
 
-Then('se registra el ingreso del paciente a la cola con estado: Pendiente y hora actual {string}', (horaActual) => {
-  signosVitales = {
-    temperatura: datosIngreso.temperatura,
-    frecCardiaca: datosIngreso.frecuenciaCardiaca,
-    frecRespiratoria: datosIngreso.frecuenciaRespiratoria,
+Then('se registra el ingreso del paciente a la cola con estado: Pendiente y hora actual {string}', function (this: CustomWorld, horaActual) {
+  const signosVitales: SignosVitales = {
+    temperatura: this.datosIngreso.temperatura,
+    frecCardiaca: this.datosIngreso.frecuenciaCardiaca,
+    frecRespiratoria: this.datosIngreso.frecuenciaRespiratoria,
     tensionArterial: {
-      frecSistolica: datosIngreso.tensionArterial.split("/")[0],
-      frecDiastolica: datosIngreso.tensionArterial.split("/")[1]
+      frecSistolica: this.datosIngreso.tensionArterial.split("/")[0] as number,
+      frecDiastolica: this.datosIngreso.tensionArterial.split("/")[1] as number
     }
   };
 
-  ingreso.paciente = paciente;
-  ingreso.signosVitales = signosVitales;
-  ingreso.informe = datosIngreso.informe;
-  ingreso.nivelEmergencia = datosIngreso.nivelEmergencia;
-  ingreso.horaActual = horaActual;
+  const hora = horaActual.split(":")[0] as number;
+  const minutos = horaActual.split(":")[1] as number;
+  const fecha = new Date(2025, 10, 13, hora, minutos);
+  const ingreso = new Ingreso(this.paciente!, fecha, this.datosIngreso.informe, this.nivelEmergencia, signosVitales);
 
-  ingresoServicio.registrar(ingreso);
+  this.ingresoServicio.registrar(ingreso);
 });
 
-Then('la cola de espera de pacientes es:', (dataTable) => {
-  const colaEspera = dataTable.hashes();
-  expect(pacientesEnEspera).to.deep.equal(colaEspera);
+Then('la cola de espera de pacientes es:', function(this: CustomWorld, dataTable) {
+  const ingresosEsperados = dataTable.hashes();
+  const ingresosActuales = this.ingresoServicio.obtenerIngresosEnEspera().map(i => { nombre: `${i.paciente.nombre} ${i.paciente.apellido}` });
+
+  expect(ingresosActuales).to.deep.equal(ingresosEsperados);
 });
 
 
 
 // SCENARIO: Ingreso de urgencias de paciente no existente
 
-When('un paciente ingresa a urgencias con los siguientes datos:', (dataTable) => {
-  datosIngreso = dataTable.hashes()[0];
-  paciente = pacientesRegistrados.find(p => p.dni === datosIngreso.dni);
-  expect(paciente).to.be.undefined;
+When('un paciente ingresa a urgencias con los siguientes datos:', function(this: CustomWorld, dataTable) {
+  this.datosIngreso = dataTable.hashes()[0];
+  this.paciente = this.pacienteServicio.buscar(this.datosIngreso.cuil);
+  expect(this.paciente).to.be.null;
 });
 
-Then('se registra el nuevo paciente', () => {
-  pacientesRegistrados.push(
-    { dni: datosIngreso.dni, nombre: datosIngreso.nombre }
-  );
-  paciente = pacientesRegistrados.find(p => p.dni === datosIngreso.dni);
-  expect(paciente).to.not.be.undefined;
+Then('se registra el nuevo paciente', function (this: CustomWorld) {
+  const nombre = this.datosIngreso.nombre;
+  const apellido = this.datosIngreso.apellido;
+  const cuil = this.datosIngreso.cuil;
+
+  this.paciente = new Paciente(cuil, apellido, nombre, this.domicilioMock);
+  this.pacienteServicio.registrar(this.paciente);
+
+  this.paciente = this.pacienteServicio.buscar(cuil);
+
+  expect(this.paciente).to.not.be.null;
 });
 
 
@@ -143,21 +109,22 @@ Then('se registra el nuevo paciente', () => {
 // SCENARIO: Ingreso de paciente cargando frecuencia respiratoria con valor negativo
 // SCENARIO: Ingreso a urgencias de paciente existente con datos incompletos
 
-Then('debo ver un mensaje de error {string}', function (mensajeErrorEsperado) {
-  signosVitales = {
-    temperatura: datosIngreso.temperatura,
-    frecCardiaca: datosIngreso.frecuenciaCardiaca,
-    frecRespiratoria: datosIngreso.frecuenciaRespiratoria,
+Then('debo ver un mensaje de error {string}', function (this: CustomWorld, mensajeErrorEsperado) {
+  const signosVitales: SignosVitales = {
+    temperatura: this.datosIngreso.temperatura,
+    frecCardiaca: this.datosIngreso.frecuenciaCardiaca,
+    frecRespiratoria: this.datosIngreso.frecuenciaRespiratoria,
     tensionArterial: {
-      frecSistolica: datosIngreso.tensionArterial.split("/")[0],
-      frecDiastolica: datosIngreso.tensionArterial.split("/")[1]
+      frecSistolica: this.datosIngreso.tensionArterial.split("/")[0] as number,
+      frecDiastolica: this.datosIngreso.tensionArterial.split("/")[1] as number
     }
   };
+  const fecha = new Date(2025, 10, 13, 8, 20);
+  this.nivelEmergencia = NivelEmergencia[this.datosIngreso.nivelEmergencia];
 
-  ingreso.paciente = paciente;
-  ingreso.signosVitales = signosVitales;
-
-  let mensaje = ingresoServicio.registrar(ingreso);
+  const ingreso = new Ingreso(this.paciente!, fecha, this.informeMock, this.nivelEmergencia, signosVitales);
+  
+  const mensaje = this.ingresoServicio.registrar(ingreso);
 
   expect(mensaje).to.be.equal(mensajeErrorEsperado);
 });
