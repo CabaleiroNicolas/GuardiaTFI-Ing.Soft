@@ -1,3 +1,4 @@
+import { Afiliado } from "../value-objects/afiliado.vo";
 import { Domicilio } from "../value-objects/domicilio.vo";
 
 export class Paciente {
@@ -6,12 +7,14 @@ export class Paciente {
   private apellido: string;
   private nombre: string;
   private domicilio: Domicilio;
+  private obraSocial: Afiliado;
 
-  constructor(cuil: string, apellido: string, nombre: string, domicilio: Domicilio) {
+  constructor(cuil: string, apellido: string, nombre: string, domicilio: Domicilio, obraSocial: Afiliado) {
     this.cuil = cuil;
     this.apellido = apellido;
     this.nombre = nombre;
     this.domicilio = domicilio;
+    this.obraSocial = obraSocial;
   }
 
   getCuil(): string {
@@ -28,5 +31,9 @@ export class Paciente {
 
   getDomicilio(): Domicilio {
     return this.domicilio;
+  }
+
+   getObraSocial(): Afiliado {
+    return this.obraSocial;
   }
 }
