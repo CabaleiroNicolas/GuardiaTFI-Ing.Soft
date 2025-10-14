@@ -8,6 +8,10 @@ Como enfermera Quiero poder registrar las admisiones de los pacientes a urgencia
       | 20-12345678-1 | Juan   | Pérez    | Las Heras  | 955    | San Miguel de Tucumán  |
       | 20-87654321-1 | María  | López    | Monteagudo | 650    | San Miguel de Tucumán  |
       | 20-22222222-1 | Carlos | Ruiz     | 25 de Mayo | 320    | San Miguel de Tucumán  |
+    And existe una enfermera registrada con los siguientes datos:
+      | cuil          | nombre    | apellido    |  matricula |
+      | 20-44444444-1 | Martina   | Stoessel    |  34        |
+      
 
 ##-----------------------------------------------------------------------------------------------------------------------------------------##
 ##-----------------------------------------------------------------------------------------------------------------------------------------##
