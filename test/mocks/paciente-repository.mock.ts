@@ -10,7 +10,7 @@ export class PacienteRepositoryMock implements IPacienteRepository {
   }
 
   obtener(cuil: string): Paciente | null {
-    const paciente: Paciente | undefined = this.pacientesRegistrados.find(p => p.cuil == cuil);
+    const paciente: Paciente | undefined = this.pacientesRegistrados.find(p => p.getCuil() == cuil);
     if(!paciente)return null;
     return paciente;
   }

@@ -1,6 +1,6 @@
 import { IIngresoRepository } from "src/modules/urgencias/application/ports/ingreso-repository.interface";
 import { Ingreso } from "src/modules/urgencias/domain/entities/ingreso.entity";
-import { EstadoIngreso } from "src/modules/urgencias/domain/value-objects/estado-ingreso.vo";
+import { EstadoIngreso } from "src/modules/urgencias/domain/value-objects/estado-ingreso.enum";
 
 export class IngresoRepositoryMock implements IIngresoRepository {
   
@@ -11,7 +11,7 @@ export class IngresoRepositoryMock implements IIngresoRepository {
   }
 
   obtenerTodos(estado: EstadoIngreso = EstadoIngreso.PENDIENTE): Ingreso[] {
-    return this.ingresosEnEspera.filter(i => i.estado == estado);
+    return this.ingresosEnEspera.filter(i => i.getEstado() == estado);
   }
 
   registrar(ingreso: Ingreso): boolean {

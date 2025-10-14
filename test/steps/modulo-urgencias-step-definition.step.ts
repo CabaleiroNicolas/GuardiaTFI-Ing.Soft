@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { Ingreso } from 'src/modules/urgencias/domain/entities/ingreso.entity';
 import { Paciente } from 'src/modules/urgencias/domain/entities/paciente.entity';
 import { Domicilio } from 'src/modules/urgencias/domain/value-objects/domicilio.vo';
-import { NivelEmergencia, NivelEmergenciaHelper } from 'src/modules/urgencias/domain/value-objects/nivel-emergencia.vo';
+import { NivelEmergencia, NivelEmergenciaHelper } from 'src/modules/urgencias/domain/value-objects/nivel-emergencia.enum';
 import { SignosVitales } from 'src/modules/urgencias/domain/value-objects/signos-vitales.vo';
 import { CustomWorld } from 'test/support/world';
 
@@ -74,8 +74,13 @@ Then('se registra el ingreso del paciente a la cola con estado: Pendiente y hora
 });
 
 Then('la cola de espera de pacientes es:', function (this: CustomWorld, dataTable) {
+
   const ingresosEsperados = JSON.stringify(dataTable.hashes());
-  const ingresosActuales = JSON.stringify(this.ingresoServicio.obtenerIngresosEnEspera().map(i => {return {nombre: `${i.paciente.nombre} ${i.paciente.apellido}`}}));
+
+  const ingresosActuales = JSON.stringify(this.ingresoServicio.obtenerIngresosEnEspera().map(i => {
+    const paciente = i.getPaciente();
+    return { nombre: `${paciente.getNombre()} ${paciente.getApellido()}` };
+  }));
 
   expect(ingresosActuales).to.deep.equal(ingresosEsperados);
 });

@@ -4,7 +4,7 @@ import { PacienteService } from "src/modules/urgencias/application/services/paci
 import { Ingreso } from "src/modules/urgencias/domain/entities/ingreso.entity";
 import { Paciente } from "src/modules/urgencias/domain/entities/paciente.entity";
 import { Domicilio } from "src/modules/urgencias/domain/value-objects/domicilio.vo";
-import { NivelEmergencia } from "src/modules/urgencias/domain/value-objects/nivel-emergencia.vo";
+import { NivelEmergencia } from "src/modules/urgencias/domain/value-objects/nivel-emergencia.enum";
 import { SignosVitales } from "src/modules/urgencias/domain/value-objects/signos-vitales.vo";
 import { IngresoRepositoryMock } from "test/mocks/ingreso-repository.mock";
 import { PacienteRepositoryMock } from "test/mocks/paciente-repository.mock";
