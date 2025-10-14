@@ -1,5 +1,5 @@
-import { EstadoIngreso } from "../value-objects/estado-ingreso.vo";
-import { NivelEmergencia } from "../value-objects/nivel-emergencia.vo";
+import { EstadoIngreso } from "../value-objects/estado-ingreso.enum";
+import { NivelEmergencia } from "../value-objects/nivel-emergencia.enum";
 import { SignosVitales } from "../value-objects/signos-vitales.vo";
 import { Paciente } from "./paciente.entity";
 

@@ -1,20 +1,23 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { Ingreso } from "../../domain/entities/ingreso.entity";
 import { IIngresoService } from "../ports/ingreso-service.interface";
-import { IIngresoRepository } from "../ports/ingreso-repository.interface";
-import { NivelEmergencia } from "../../domain/value-objects/nivel-emergencia.vo";
-import { EstadoIngreso } from "../../domain/value-objects/estado-ingreso.vo";
+import { IIngresoRepository, INGRESO_REPOSITORIO } from "../ports/ingreso-repository.interface";
+import { NivelEmergencia } from "../../domain/value-objects/nivel-emergencia.enum";
+import { EstadoIngreso } from "../../domain/value-objects/estado-ingreso.enum";
 
 @Injectable()
 export class IngresoService implements IIngresoService {
 
-  private ingresoRepo: IIngresoRepository;
-  private ordenNivelesEmergencia = [NivelEmergencia.CRITICO, NivelEmergencia.EMERGENCIA, NivelEmergencia.URGENCIA, NivelEmergencia.URGENCIA_MENOR, NivelEmergencia.SIN_URGENCIA];
+  private readonly ordenNivelesEmergencia: NivelEmergencia[];
 
-  constructor(ingresoRepo: IIngresoRepository) {
-    this.ingresoRepo = ingresoRepo;
+  constructor(
+    @Inject(INGRESO_REPOSITORIO)
+    private readonly ingresoRepo: IIngresoRepository
+  ) {
+    this.ordenNivelesEmergencia = [NivelEmergencia.CRITICO, NivelEmergencia.EMERGENCIA, NivelEmergencia.URGENCIA, NivelEmergencia.URGENCIA_MENOR, NivelEmergencia.SIN_URGENCIA];
   }
 
+  
   comprobarCampos(ingreso: Ingreso): void {
     const { signosVitales, informe, nivelEmergencia } = ingreso;
     const { tensionArterial } = signosVitales;
