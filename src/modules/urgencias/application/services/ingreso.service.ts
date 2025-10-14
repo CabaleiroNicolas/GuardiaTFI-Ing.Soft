@@ -19,7 +19,9 @@ export class IngresoService implements IIngresoService {
 
   
   comprobarCampos(ingreso: Ingreso): void {
-    const { signosVitales, informe, nivelEmergencia } = ingreso;
+    const signosVitales = ingreso.getSignosVitales();
+    const informe = ingreso.getInforme();
+    const nivelEmergencia = ingreso.getNivelEmergencia();
     const { tensionArterial } = signosVitales;
 
     if (
@@ -49,8 +51,8 @@ export class IngresoService implements IIngresoService {
   private ordenarIngresosEnEspera(colaIngresos: Ingreso[]) {
     return colaIngresos.sort((ingreso1, ingreso2) => { 
 
-      const nivel1 = this.ordenNivelesEmergencia.indexOf(ingreso1.nivelEmergencia);
-      const nivel2 = this.ordenNivelesEmergencia.indexOf(ingreso2.nivelEmergencia);
+      const nivel1 = this.ordenNivelesEmergencia.indexOf(ingreso1.getNivelEmergencia());
+      const nivel2 = this.ordenNivelesEmergencia.indexOf(ingreso2.getNivelEmergencia());
 
       return nivel1 - nivel2;
     })
