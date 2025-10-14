@@ -9,8 +9,8 @@ export class PacienteService implements IPacienteService {
       this.pacienteRepo = pacienteRepo;
     }
     
-    buscar(dni: string): Paciente | null {
-      return this.pacienteRepo.obtener(dni);
+    buscar(cuil: string): Paciente | null {
+      return this.pacienteRepo.obtener(cuil);
     }
   
     modificar(paciente: Paciente): boolean {

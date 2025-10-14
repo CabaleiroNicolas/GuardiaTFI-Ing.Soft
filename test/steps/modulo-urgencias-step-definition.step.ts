@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { Ingreso } from 'src/modules/urgencias/domain/entities/ingreso.entity';
 import { Paciente } from 'src/modules/urgencias/domain/entities/paciente.entity';
 import { Domicilio } from 'src/modules/urgencias/domain/value-objects/domicilio.vo';
-import { NivelEmergencia } from 'src/modules/urgencias/domain/value-objects/nivel-emergencia.vo';
+import { NivelEmergencia, NivelEmergenciaHelper } from 'src/modules/urgencias/domain/value-objects/nivel-emergencia.vo';
 import { SignosVitales } from 'src/modules/urgencias/domain/value-objects/signos-vitales.vo';
 import { CustomWorld } from 'test/support/world';
 
@@ -22,7 +22,7 @@ Given('los pacientes registrados con los siguientes datos:', function (this: Cus
       numero: p.numero,
       localidad: p.localidad
     };
-    const paciente = new Paciente(p.dni, p.apellido, p.nombre, domicilio);
+    const paciente = new Paciente(p.cuil, p.apellido, p.nombre, domicilio);
     this.pacienteServicio.registrar(paciente);
   }
 });
@@ -38,19 +38,19 @@ Given('el sistema tiene la siguiente cola de pacientes en espera:', function (th
 
   for (const i of ingresos) {
     const paciente = this.pacienteServicio.buscar(i.cuil);
-    const nivelEmergencia: NivelEmergencia = NivelEmergencia[i.nivelEmergencia];
+    const nivelEmergencia: NivelEmergencia = NivelEmergenciaHelper.nivelEmergenciaFromString(i.nivelEmergencia);
     const hora = i.horaIngreso.split(":")[0] as number;
     const minutos = i.horaIngreso.split(":")[1] as number;
     const fecha = new Date(2025, 10, 13, hora, minutos);
-    const ingreso = new Ingreso(paciente!, fecha, "", nivelEmergencia, this.signosVitalesMock);
-    
+    const ingreso = new Ingreso(paciente!, fecha, this.informeMock, nivelEmergencia, this.signosVitalesMock);
+
     this.ingresoServicio.registrar(ingreso);
   }
 });
 
 When('el paciente ingresa a urgencias con los siguientes datos:', function (this: CustomWorld, dataTable) {
   this.datosIngreso = dataTable.hashes()[0];
-  this.nivelEmergencia = NivelEmergencia[this.datosIngreso.nivelEmergencia];
+  this.nivelEmergencia = NivelEmergenciaHelper.nivelEmergenciaFromString(this.datosIngreso.nivelEmergencia);
   this.paciente = this.pacienteServicio.buscar(this.datosIngreso.cuil);
 });
 
@@ -73,9 +73,9 @@ Then('se registra el ingreso del paciente a la cola con estado: Pendiente y hora
   this.ingresoServicio.registrar(ingreso);
 });
 
-Then('la cola de espera de pacientes es:', function(this: CustomWorld, dataTable) {
-  const ingresosEsperados = dataTable.hashes();
-  const ingresosActuales = this.ingresoServicio.obtenerIngresosEnEspera().map(i => { nombre: `${i.paciente.nombre} ${i.paciente.apellido}` });
+Then('la cola de espera de pacientes es:', function (this: CustomWorld, dataTable) {
+  const ingresosEsperados = JSON.stringify(dataTable.hashes());
+  const ingresosActuales = JSON.stringify(this.ingresoServicio.obtenerIngresosEnEspera().map(i => {return {nombre: `${i.paciente.nombre} ${i.paciente.apellido}`}}));
 
   expect(ingresosActuales).to.deep.equal(ingresosEsperados);
 });
@@ -84,7 +84,7 @@ Then('la cola de espera de pacientes es:', function(this: CustomWorld, dataTable
 
 // SCENARIO: Ingreso de urgencias de paciente no existente
 
-When('un paciente ingresa a urgencias con los siguientes datos:', function(this: CustomWorld, dataTable) {
+When('un paciente ingresa a urgencias con los siguientes datos:', function (this: CustomWorld, dataTable) {
   this.datosIngreso = dataTable.hashes()[0];
   this.paciente = this.pacienteServicio.buscar(this.datosIngreso.cuil);
   expect(this.paciente).to.be.null;
@@ -120,10 +120,10 @@ Then('debo ver un mensaje de error {string}', function (this: CustomWorld, mensa
     }
   };
   const fecha = new Date(2025, 10, 13, 8, 20);
-  this.nivelEmergencia = NivelEmergencia[this.datosIngreso.nivelEmergencia];
+  this.nivelEmergencia = NivelEmergenciaHelper.nivelEmergenciaFromString(this.datosIngreso.nivelEmergencia);
 
   const ingreso = new Ingreso(this.paciente!, fecha, this.informeMock, this.nivelEmergencia, signosVitales);
-  
+
   const mensaje = this.ingresoServicio.registrar(ingreso);
 
   expect(mensaje).to.be.equal(mensajeErrorEsperado);
