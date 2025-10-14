@@ -1,7 +1,0 @@
-export enum NivelEmergencia {
-  CRITICO,
-  EMERGENCIA,
-  URGENCIA,
-  URGENCIA_MENOR,
-  SIN_URGENCIA
-}

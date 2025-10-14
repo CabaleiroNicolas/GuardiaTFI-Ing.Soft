@@ -4,7 +4,20 @@
 
 ## Description
 
-Proyecto final para la catedra Ingenieria de Software - UTN-FRT
+Proyecto final para la catedra Ingenieria de Software - UTN-FRT - 4K2
+
+ - Argañaraz Vargas Angelica - 53492
+ - Brahim Camila Ayelen - 56066
+ - Breslauer León - 56340
+ - Cabaleiro Nicolas - 53136
+ - Rojas Dalmiro Luis - 31019
+
+## Run tests
+
+```bash
+# correr test de Cucumber (aceptación)
+$ npm run test:bdd
+```
 
 ## Project setup
 
@@ -21,11 +34,4 @@ $ npm run docker:up
 ```bash
 # watch mode (USAR ESTE PARA DESARROLLO)
 $ npm run start:dev
-```
-
-## Run tests
-
-```bash
-# correr test de Cucumber
-$ npm run test
 ```
