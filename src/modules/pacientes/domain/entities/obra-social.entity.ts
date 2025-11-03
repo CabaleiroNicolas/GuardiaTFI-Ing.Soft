@@ -3,9 +3,7 @@ export class ObraSocial {
   private id: string;
   private nombre: string;
 
-
   constructor(id: string, nombre: string) {
-    
     this.nombre = nombre;
     this.id = id;
   }

@@ -1,16 +1,16 @@
 import { setWorldConstructor } from "@cucumber/cucumber";
 import { IngresoService } from "src/modules/urgencias/application/services/ingreso.service";
-import { PacienteService } from "src/modules/urgencias/application/services/paciente.service";
+import { PacienteService } from "src/modules/pacientes/application/services/paciente.service";
 import { Enfermera } from "src/modules/urgencias/domain/entities/enfermera.entity";
 import { Ingreso } from "src/modules/urgencias/domain/entities/ingreso.entity";
-import { ObraSocial } from "src/modules/urgencias/domain/entities/obra-social.entity";
-import { Paciente } from "src/modules/urgencias/domain/entities/paciente.entity";
-import { Afiliado } from "src/modules/urgencias/domain/value-objects/afiliado.vo";
-import { Domicilio } from "src/modules/urgencias/domain/value-objects/domicilio.vo";
+import { ObraSocial } from "src/modules/pacientes/domain/entities/obra-social.entity";
+import { Domicilio } from "src/modules/pacientes/domain/value-objects/domicilio.vo";
 import { NivelEmergencia } from "src/modules/urgencias/domain/value-objects/nivel-emergencia.enum";
 import { SignosVitales } from "src/modules/urgencias/domain/value-objects/signos-vitales.vo";
 import { IngresoRepositoryMock } from "test/mocks/ingreso-repository.mock";
 import { PacienteRepositoryMock } from "test/mocks/paciente-repository.mock";
+import { Paciente } from "src/modules/pacientes/domain/entities/paciente.entity";
+import { Afiliado } from "src/modules/pacientes/domain/value-objects/afiliado.vo";
 
 export class CustomWorld {
   ingresoServicio: IngresoService;

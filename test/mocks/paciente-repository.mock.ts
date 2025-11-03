@@ -1,5 +1,5 @@
-import { IPacienteRepository } from "src/modules/urgencias/application/ports/paciente-repository.interface";
-import { Paciente } from "src/modules/urgencias/domain/entities/paciente.entity";
+import { IPacienteRepository } from "src/modules/pacientes/application/ports/paciente-repository.interface";
+import { Paciente } from "src/modules/pacientes/domain/entities/paciente.entity";
 
 export class PacienteRepositoryMock implements IPacienteRepository {
   
