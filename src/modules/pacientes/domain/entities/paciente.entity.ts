@@ -7,9 +7,9 @@ export class Paciente {
   private apellido: string;
   private nombre: string;
   private domicilio: Domicilio;
-  private obraSocial: Afiliado;
+  private obraSocial: Afiliado | null;
 
-  constructor(cuil: string, apellido: string, nombre: string, domicilio: Domicilio, obraSocial: Afiliado) {
+  constructor(cuil: string, apellido: string, nombre: string, domicilio: Domicilio, obraSocial: Afiliado | null) {
     this.cuil = cuil;
     this.apellido = apellido;
     this.nombre = nombre;
