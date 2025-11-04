@@ -33,7 +33,7 @@ export class Paciente {
     return this.domicilio;
   }
 
-   getObraSocial(): Afiliado {
+   getObraSocial(): Afiliado | null {
     return this.obraSocial;
   }
 }
