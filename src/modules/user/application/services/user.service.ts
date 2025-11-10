@@ -25,9 +25,11 @@ export class UserService implements IUserService {
       const hashedPassword: string = await bcrypt.hash(password, 12);
       newUser = new User({ email, password: hashedPassword });
     } else {
-      newUser = new User({ email });
+      throw new BadRequestException('Password is required');
     }
 
+    const newUserId: number = (await this.getLastUserId()) + 1;
+    newUser.userId = newUserId;
     await this.userRepo.save(newUser);
 
     /*  await this.emailSender.sendConfirmationEmail(
@@ -73,5 +75,9 @@ export class UserService implements IUserService {
   async findWithPasswordByEmail(email: string): Promise<User | null> {
     return this.userRepo.findByEmail(email);
 
+  }
+
+  async getLastUserId(): Promise<number> {
+    return await Promise.resolve(this.userRepo.findLastUserId());
   }
 }
