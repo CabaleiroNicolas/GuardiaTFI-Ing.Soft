@@ -8,13 +8,6 @@ import { USER_REPOSITORIO } from './application/ports/user-repository.interface'
 
 @Module({
   controllers: [UserController],
-  imports: [
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: {
-        expiresIn: '2h',
-      },
-    }),],
   providers: [
     {
       provide: USER_SERVICIO,

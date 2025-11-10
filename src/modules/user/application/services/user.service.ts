@@ -11,7 +11,6 @@ export class UserService implements IUserService {
   constructor(
     @Inject(USER_REPOSITORIO)
     private userRepo: IUserRepository,
-    private readonly jwtService: JwtService,
   ) { }
 
   async createUser(email: string, password: string) {
@@ -31,32 +30,8 @@ export class UserService implements IUserService {
     const newUserId: number = (await this.getLastUserId()) + 1;
     newUser.userId = newUserId;
     await this.userRepo.save(newUser);
-
-    /*  await this.emailSender.sendConfirmationEmail(
-       email,
-       this.jwtService.sign({ email: email }),
-     ); */
   }
 
-  async confirmUser(token: string) {
-    let payload: { email: string };
-
-    try {
-      payload = this.jwtService.verify(token);
-    } catch (e: any) {
-      if (e.name === 'TokenExpiredError')
-        throw new GoneException('Token expired');
-      if (e.name === 'JsonWebTokenError')
-        throw new UnauthorizedException('Token invalid');
-      if (e.name === 'NotBeforeError')
-        throw new UnauthorizedException('Token not valid yet');
-      throw e;
-    }
-
-    if (!payload.email) throw new UnauthorizedException('Token invalid');
-
-    //await this.userRepo.update({ email: payload.email });
-  }
 
   // Búsqueda “pública” (no devuelve password)
   async findByEmail(email: string): Promise<Omit<User, 'password'> | null> {
@@ -77,7 +52,7 @@ export class UserService implements IUserService {
 
   }
 
-  async getLastUserId(): Promise<number> {
+  private async getLastUserId(): Promise<number> {
     return await Promise.resolve(this.userRepo.findLastUserId());
   }
 }

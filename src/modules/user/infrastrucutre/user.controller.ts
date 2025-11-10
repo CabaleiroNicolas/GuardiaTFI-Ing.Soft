@@ -17,9 +17,4 @@ export class UserController {
     return { message: 'User registered succesfully' };
   }
 
-  @Get('confirm')
-  async confirmUserEmail(@Query('token') token: string) {
-    await this.userService.confirmUser(token);
-  }
-
 }
