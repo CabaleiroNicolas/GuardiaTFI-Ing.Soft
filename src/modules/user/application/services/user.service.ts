@@ -1,4 +1,4 @@
-import { BadRequestException, GoneException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, GoneException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { IUserService } from '../ports/user-service.interface';
 import { User } from '../../domain/user.entity';
 import * as bcrypt from 'bcrypt';
@@ -8,11 +8,12 @@ import { IUserRepository } from '../ports/user-repository.interface';
 @Injectable()
 export class UserService implements IUserService {
 
-    constructor(
+  constructor(
+    @Inject('USER_REPOSITORY')
     private userRepo: IUserRepository,
     private readonly jwtService: JwtService,
-  ) {}
-    
+  ) { }
+
   async createUser(email: string, password: string) {
     let newUser: User;
 
@@ -28,11 +29,11 @@ export class UserService implements IUserService {
     }
 
     await this.userRepo.save(newUser);
-    
-   /*  await this.emailSender.sendConfirmationEmail(
-      email,
-      this.jwtService.sign({ email: email }),
-    ); */
+
+    /*  await this.emailSender.sendConfirmationEmail(
+       email,
+       this.jwtService.sign({ email: email }),
+     ); */
   }
 
   async confirmUser(token: string) {
@@ -58,8 +59,8 @@ export class UserService implements IUserService {
   // Búsqueda “pública” (no devuelve password)
   async findByEmail(email: string): Promise<Omit<User, 'password'> | null> {
     const user: User | null = await this.userRepo.findByEmail(email);
-    if(!user) {
-        return null;
+    if (!user) {
+      return null;
     }
 
     const { password, ...safe } = user;
@@ -71,6 +72,6 @@ export class UserService implements IUserService {
   // Para login: incluye el passwordHash (select:false en la entidad)
   async findWithPasswordByEmail(email: string): Promise<User | null> {
     return this.userRepo.findByEmail(email);
-      
+
   }
 }
