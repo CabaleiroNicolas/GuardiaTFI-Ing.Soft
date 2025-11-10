@@ -1,6 +1,6 @@
 import { User } from "../../domain/user.entity";
 
-export const USUARIO_SERVICIO = Symbol('USER_SERVICE');
+export const USER_SERVICIO = Symbol('USER_SERVICIO');
 
 export interface IUserService {
     findWithPasswordByEmail(email: string): Promise<User | null>;

@@ -1,6 +1,6 @@
 import { User } from "../../domain/user.entity";
 
-export const USER_REPOSITORY = Symbol('USER_REPOSITORY');
+export const USER_REPOSITORIO = Symbol('USER_REPOSITORIO');
 
 export interface IUserRepository {
     save(user: User): Promise<void>;

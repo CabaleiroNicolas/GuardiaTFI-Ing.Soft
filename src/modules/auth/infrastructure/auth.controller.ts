@@ -1,13 +1,13 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { IAuthService } from '../application/ports/auth-service.interface';
+import { AUTH_SERVICIO, IAuthService } from '../application/ports/auth-service.interface';
 import { AuthenticatedRequestVO } from '../domain/value-objects/authenticated-user.vo';
 
 @Controller('auth')
 export class AuthController {
 
     constructor(
-        @Inject('AUTH_SERVICE')
+        @Inject(AUTH_SERVICIO)
         private readonly authService: IAuthService
     ) {}
 

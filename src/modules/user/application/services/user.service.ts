@@ -3,13 +3,13 @@ import { IUserService } from '../ports/user-service.interface';
 import { User } from '../../domain/user.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { IUserRepository } from '../ports/user-repository.interface';
+import { IUserRepository, USER_REPOSITORIO } from '../ports/user-repository.interface';
 
 @Injectable()
 export class UserService implements IUserService {
 
   constructor(
-    @Inject('USER_REPOSITORY')
+    @Inject(USER_REPOSITORIO)
     private userRepo: IUserRepository,
     private readonly jwtService: JwtService,
   ) { }

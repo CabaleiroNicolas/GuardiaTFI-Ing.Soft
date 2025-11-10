@@ -6,7 +6,7 @@ import { UserModule } from './modules/user/user.module';
 import { UrgenciasModule } from './modules/urgencias/urgencias.module';
 
 @Module({
-  imports: [AuthModule, UserModule, UrgenciasModule],
+  imports: [AuthModule, UserModule,],
   controllers: [AppController],
   providers: [AppService],
 })

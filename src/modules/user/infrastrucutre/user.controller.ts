@@ -1,12 +1,12 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post, Query } from '@nestjs/common';
-import { IUserService } from '../application/ports/user-service.interface';
+import { IUserService, USER_SERVICIO } from '../application/ports/user-service.interface';
 import { CreateUserRequestVO } from '../domain/value-objects/create-user.vo';
 
 @Controller('users')
 export class UserController {
 
   constructor(
-    @Inject('USER_SERVICE')
+    @Inject(USER_SERVICIO)
     private readonly userService: IUserService
 ) {}
 

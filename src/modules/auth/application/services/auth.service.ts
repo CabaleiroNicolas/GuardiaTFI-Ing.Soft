@@ -2,14 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { IAuthService } from '../ports/auth-service.interface';
-import { IUserService } from 'src/modules/user/application/ports/user-service.interface';
+import { IUserService, USER_SERVICIO } from 'src/modules/user/application/ports/user-service.interface';
 import { User } from 'src/modules/user/domain/user.entity';
 
 @Injectable()
 export class AuthService implements IAuthService {
 
   constructor(
-    @Inject('USER_SERVICE')
+    @Inject(USER_SERVICIO)
     private readonly userService: IUserService,
     private readonly jwtService: JwtService,
   ) {}
