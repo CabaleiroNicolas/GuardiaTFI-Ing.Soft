@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { IAuthService } from '../ports/auth.interface';
+import { IAuthService } from '../ports/auth-service.interface';
+import { IUserService } from 'src/modules/user/application/ports/user-service.interface';
+import { User } from 'src/modules/user/domain/user.entity';
 
 @Injectable()
 export class AuthService implements IAuthService {
+
   constructor(
-    private readonly userService: UserService,
+    @Inject('USER_SERVICE')
+    private readonly userService: IUserService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -21,7 +25,7 @@ export class AuthService implements IAuthService {
     return safe;
   }
 
-  async login(user: Pick<User, 'userId' | 'email'>) {
+  async login(user: User): Promise<any> {
     const payload = { id: user.userId, email: user.email };
     return { access_token: await this.jwtService.signAsync(payload) };
   }
