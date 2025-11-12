@@ -3,6 +3,8 @@ import { Paciente } from "../../domain/entities/paciente.entity";
 import { IPacienteRepository, PACIENTE_REPOSITORIO } from "../ports/paciente-repository.interface";
 import { IPacienteService } from "../ports/paciente-service.interface";
 import { IObraSocialRepository } from "../ports/obra-social-repository.interface";
+import { IAfiliadoRepository } from "../ports/afiliado-repository.interface";
+import { Afiliado } from "../../domain/value-objects/afiliado.vo";
 
 @Injectable()
 export class PacienteService implements IPacienteService {
@@ -10,7 +12,8 @@ export class PacienteService implements IPacienteService {
     constructor(
       @Inject(PACIENTE_REPOSITORIO)
       private readonly pacienteRepo: IPacienteRepository,
-      private readonly obraSocialRepo: IObraSocialRepository
+      private readonly obraSocialRepo: IObraSocialRepository,
+      private readonly afiliadoRepo: IAfiliadoRepository
     ) {}
     
     buscar(cuil: string): Paciente | null {
@@ -24,30 +27,45 @@ export class PacienteService implements IPacienteService {
       const domicilio = paciente.getDomicilio();
       const afiliado = paciente.getObraSocial();
   
-      if (
-        !cuil ||
-        !apellido ||
-        !nombre ||
-        !domicilio ||
-        !domicilio.calle ||
-        !domicilio.localidad ||
-        !domicilio.numero
-      )
-        throw new Error("Hay campos sin completar");
+      if (!cuil)
+        throw new Error("El campo cuit no puede estar vacío");
+
+      if (!apellido)
+        throw new Error("El campo apellido no puede estar vacío");
+
+      if (!nombre)
+        throw new Error("El campo nombre no puede estar vacío");
+
+      if (!domicilio.calle)
+        throw new Error("El campo calle no puede estar vacío");
+
+      if (!domicilio.localidad)
+        throw new Error("El campo localidad no puede estar vacío");
+
+      if (!domicilio.numero)
+        throw new Error("El campo numero no puede estar vacío");
       
       if (!cuil.match('^(20|27)-[0-9]{8}-[0-9]$'))
         throw new Error("Formato de CUIL incorrecto");
       
-      if (afiliado != null) {
-        const obraSocial = afiliado.obraSocial;
-        const numeroAfiliadoParseado = Number(afiliado.numeroAfiliado);
+      if (afiliado != null)
+        this.comprobarAfiliado(afiliado)
+    }
+  
+    comprobarAfiliado(afiliado: Afiliado): void {
+      const obraSocial = afiliado.obraSocial;
+      const afiliadoBuscado = this.afiliadoRepo.obtener(afiliado.numeroAfiliado);
 
-        if (numeroAfiliadoParseado < 0)
-          throw new Error("El valor del número de afiliado no puede ser negativo");
+      if (!this.obraSocialRepo.obtener(obraSocial.getId())) {
+        throw new Error("Obra social inexistente");
+      }
 
-        if (!this.obraSocialRepo.obtener(obraSocial.getId())) {
-          throw new Error("Obra social inexistente");
-        }
+      if (afiliadoBuscado == null) {
+        throw new Error("Número de afiliado inexistente");
+      }
+
+      if (afiliadoBuscado.obraSocial.getId() !== afiliado.obraSocial.getId()) {
+        throw new Error("El paciente no está afiliado a la obra social");
       }
     }
   

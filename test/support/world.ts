@@ -12,6 +12,7 @@ import { PacienteRepositoryMock } from "test/mocks/paciente-repository.mock";
 import { Paciente } from "src/modules/pacientes/domain/entities/paciente.entity";
 import { Afiliado } from "src/modules/pacientes/domain/value-objects/afiliado.vo";
 import { ObraSocialRepositoryMock } from "test/mocks/obra-social-repository.mock";
+import { AfiliadoRepositoryMock } from "test/mocks/afiliado-repository.mock";
 
 export class CustomWorld {
   ingresoServicio: IngresoService;
@@ -51,9 +52,10 @@ export class CustomWorld {
     const ingresoRepo = new IngresoRepositoryMock();
     const pacienteRepo = new PacienteRepositoryMock();
     const obraSocialRepo = new ObraSocialRepositoryMock();
+    const afiliadoRepo = new AfiliadoRepositoryMock();
 
     this.ingresoServicio = new IngresoService(ingresoRepo);
-    this.pacienteServicio = new PacienteService(pacienteRepo, obraSocialRepo);
+    this.pacienteServicio = new PacienteService(pacienteRepo, obraSocialRepo, afiliadoRepo);
   }
 
   reset(): void {
