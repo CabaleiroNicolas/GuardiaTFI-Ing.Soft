@@ -45,8 +45,9 @@ export class PacienteService implements IPacienteService {
         if (numeroAfiliadoParseado < 0)
           throw new Error("El valor del número de afiliado no puede ser negativo");
 
-        if (!this.obraSocialRepo.obtener(obraSocial.getId()))
+        if (!this.obraSocialRepo.obtener(obraSocial.getId())) {
           throw new Error("Obra social inexistente");
+        }
       }
     }
   
@@ -58,14 +59,13 @@ export class PacienteService implements IPacienteService {
       return this.pacienteRepo.obtenerTodos();
     }
   
-    registrar(paciente: Paciente): boolean {
+    registrar(paciente: Paciente): void {
       try {
         this.comprobarCampos(paciente);
+        this.pacienteRepo.registrar(paciente);
       }
       catch (error) {
         throw new Error(`ERROR: ${error.message}`)
       }
-
-      return this.pacienteRepo.registrar(paciente);
     }
 }

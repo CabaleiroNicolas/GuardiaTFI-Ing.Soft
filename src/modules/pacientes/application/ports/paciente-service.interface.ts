@@ -7,5 +7,5 @@ export interface IPacienteService {
   comprobarCampos(paciente: Paciente): void;
   modificar(paciente: Paciente): boolean;
   obtenerPacientesRegistrados(): Paciente[];
-  registrar(paciente: Paciente): boolean;
+  registrar(paciente: Paciente): void;
 }

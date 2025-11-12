@@ -21,64 +21,44 @@ describe('PacienteService', () => {
     service = new PacienteService(pacienteRepo, obraSocialRepo);
   });
 
-  describe('registrar()', () => {
+  describe('PacienteService.registrar', () => {
     it('si el paciente tiene todos los datos mandatorios provistos y una obra social existente, debería registrarse exitosamente', () => {
       // Arrange
-      const domicilio: Domicilio = {
-        calle: 'Calle x',
-        numero: 13,
-        localidad: 'Tucumán'
-      };
       const obraSocial: ObraSocial = new ObraSocial('1', 'Obra social x');
-      const afiliado: Afiliado = {
-        numeroAfiliado: '123',
-        obraSocial,
-      }
-      const paciente = new Paciente('20-12345678-1', 'Perez', 'Juan', domicilio, afiliado);
+      const paciente = crearPaciente(obraSocial);
       obraSocialRepo.registrar(obraSocial);
 
-      // Act
-      const resultado = pacienteRepo.registrar(paciente);
-
-      // Assert
-      expect(resultado).toBe(true);
+      // Act + Assert
+      expect(() => service.registrar(paciente)).not.toThrow();
+      const pacienteRegistrado = pacienteRepo.obtener(paciente.getCuil());
+      expect(pacienteRegistrado).not.toBeNull();
     });
 
     it('si el paciente tiene todos los datos mandatorios provistos y no tiene obra social, debería registrarse exitosamente', () => {
       // Arrange
-      const domicilio: Domicilio = {
-        calle: 'Calle x',
-        numero: 13,
-        localidad: 'Tucumán'
-      };
-      const paciente = new Paciente('20-12345678-1', 'Perez', 'Juan', domicilio, null);
+      const paciente = crearPaciente();
 
-      // Act
-      const resultado = pacienteRepo.registrar(paciente);
-
-      // Assert
-      expect(resultado).toBe(true);
+      // Act + Assert
+      expect(() => service.registrar(paciente)).not.toThrow();
+      const pacienteRegistrado = pacienteRepo.obtener(paciente.getCuil());
+      expect(pacienteRegistrado).not.toBeNull();
     });
 
     it('si el paciente tiene todos los datos mandatorios provistos y una obra social inexistente, debería notificarse un mensaje de error', () => {
       // Arrange
-      const domicilio: Domicilio = {
-        calle: 'Calle x',
-        numero: 13,
-        localidad: 'Tucumán'
-      };
-      const obraSocial: ObraSocial = new ObraSocial('2', 'Obra social y');
-      const afiliado: Afiliado = {
-        numeroAfiliado: '456',
-        obraSocial,
-      }
-      const paciente = new Paciente('20-12345678-1', 'Perez', 'Juan', domicilio, afiliado);
+      const obraSocialExistente = new ObraSocial('1', 'Obra social x');
+      const obraSocialInexistente = new ObraSocial('2', 'Obra social y');
+      const paciente = crearPaciente(obraSocialInexistente);
+      obraSocialRepo.registrar(obraSocialExistente);
 
-      // Act
-      const resultado = pacienteRepo.registrar(paciente);
-
-      // Assert
-      expect(resultado).toThrow(new Error("Obra social inexistente"));
+      // Act + Assert
+      expect(() => service.registrar(paciente)).toThrow("Obra social inexistente");
     });
+
+    function crearPaciente(obraSocial?: ObraSocial): Paciente {
+      const domicilio = { calle: 'Calle x', numero: 13, localidad: 'Tucumán' };
+      const afiliado = obraSocial ? { numeroAfiliado: '123', obraSocial } : null;
+      return new Paciente('20-12345678-1', 'Perez', 'Juan', domicilio, afiliado);
+    }
   })
 });
