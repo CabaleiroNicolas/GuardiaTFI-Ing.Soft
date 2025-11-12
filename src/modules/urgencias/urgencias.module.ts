@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { IngresoService } from './application/services/ingreso.service';
-import { PacienteService } from './application/services/paciente.service';
+import { PacienteService } from '../pacientes/application/services/paciente.service';
 import { INGRESO_REPOSITORIO } from './application/ports/ingreso-repository.interface';
 import { IngresoRepositoryMock } from 'test/mocks/ingreso-repository.mock';
 import { PACIENTE_REPOSITORIO } from './application/ports/paciente-repository.interface';

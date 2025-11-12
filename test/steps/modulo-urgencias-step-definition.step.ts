@@ -2,11 +2,11 @@ import { Given, When, Then, Before } from '@cucumber/cucumber';
 import { expect } from 'chai';
 import { Enfermera } from 'src/modules/urgencias/domain/entities/enfermera.entity';
 import { Ingreso } from 'src/modules/urgencias/domain/entities/ingreso.entity';
-import { Paciente } from 'src/modules/urgencias/domain/entities/paciente.entity';
-import { Domicilio } from 'src/modules/urgencias/domain/value-objects/domicilio.vo';
+import { Domicilio } from 'src/modules/pacientes/domain/value-objects/domicilio.vo';
 import { NivelEmergencia, NivelEmergenciaHelper } from 'src/modules/urgencias/domain/value-objects/nivel-emergencia.enum';
 import { SignosVitales } from 'src/modules/urgencias/domain/value-objects/signos-vitales.vo';
 import { CustomWorld } from 'test/support/world';
+import { Paciente } from 'src/modules/pacientes/domain/entities/paciente.entity';
 
 Before((scenario) => {
   console.log(`\n\nSCENARIO: ${scenario.pickle.name}`);
@@ -23,7 +23,7 @@ Given('los pacientes registrados con los siguientes datos:', function (this: Cus
       numero: p.numero,
       localidad: p.localidad
     };
-    const paciente = new Paciente(p.cuil, p.apellido, p.nombre, domicilio, this.afiliadoMock);
+    const paciente = new Paciente(p.cuil, p.apellido, p.nombre, domicilio, null);
     this.pacienteServicio.registrar(paciente);
   }
 });
@@ -110,11 +110,10 @@ Then('se registra el nuevo paciente', function (this: CustomWorld) {
   const apellido = this.datosIngreso.apellido;
   const cuil = this.datosIngreso.cuil;
 
-  this.paciente = new Paciente(cuil, apellido, nombre, this.domicilioMock, this.afiliadoMock);
+  this.paciente = new Paciente(cuil, apellido, nombre, this.domicilioMock, null);
   this.pacienteServicio.registrar(this.paciente);
 
   this.paciente = this.pacienteServicio.buscar(cuil);
-
   expect(this.paciente).to.not.be.null;
 });
 
