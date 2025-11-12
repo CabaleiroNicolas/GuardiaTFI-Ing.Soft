@@ -23,7 +23,7 @@ Given('los pacientes registrados con los siguientes datos:', function (this: Cus
       numero: p.numero,
       localidad: p.localidad
     };
-    const paciente = new Paciente(p.cuil, p.apellido, p.nombre, domicilio, this.afiliadoMock);
+    const paciente = new Paciente(p.cuil, p.apellido, p.nombre, domicilio, null);
     this.pacienteServicio.registrar(paciente);
   }
 });
@@ -110,11 +110,10 @@ Then('se registra el nuevo paciente', function (this: CustomWorld) {
   const apellido = this.datosIngreso.apellido;
   const cuil = this.datosIngreso.cuil;
 
-  this.paciente = new Paciente(cuil, apellido, nombre, this.domicilioMock, this.afiliadoMock);
+  this.paciente = new Paciente(cuil, apellido, nombre, this.domicilioMock, null);
   this.pacienteServicio.registrar(this.paciente);
 
   this.paciente = this.pacienteServicio.buscar(cuil);
-
   expect(this.paciente).to.not.be.null;
 });
 
