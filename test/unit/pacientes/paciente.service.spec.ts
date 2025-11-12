@@ -108,6 +108,17 @@ describe('PacienteService', () => {
       expect(() => service.registrar(pacienteSinLocalidad)).toThrow("El campo localidad no puede estar vacío");
     })
 
+    // Criterio de aceptación: validación de formato de cuil del paciente
+    it('si el paciente tiene un formato de cuil inválido, debería notificarse un mensaje de error', () => {
+      // Arrange
+      const cuilMalFormateado = '20123456781';
+      const domicilio = { calle: 'Calle x', numero: 13, localidad: 'Tucumán' };
+      const paciente = new Paciente(cuilMalFormateado, 'Perez', 'Juan', domicilio, null);
+
+      // Act + Assert
+      expect(() => service.registrar(paciente)).toThrow("Formato de CUIL incorrecto");
+    })
+
     function crearPaciente(obraSocial?: ObraSocial): Paciente {
       const domicilio = { calle: 'Calle x', numero: 13, localidad: 'Tucumán' };
       const afiliado = obraSocial ? { numeroAfiliado: '1', obraSocial } : null;

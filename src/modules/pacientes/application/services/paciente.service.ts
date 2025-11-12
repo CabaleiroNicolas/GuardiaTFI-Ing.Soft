@@ -45,7 +45,7 @@ export class PacienteService implements IPacienteService {
       if (!domicilio.numero)
         throw new Error("El campo numero no puede estar vacío");
       
-      if (!cuil.match('^(20|27)-[0-9]{8}-[0-9]$'))
+      if (!/^(20|27)-\d{8}-\d$/.test(cuil))
         throw new Error("Formato de CUIL incorrecto");
       
       if (afiliado != null)
