@@ -1,4 +1,8 @@
 import { setWorldConstructor } from "@cucumber/cucumber";
+import { IEnfermeraService } from "src/modules/urgencias/application/ports/enfermera-service.interface";
+import { IIngresoService } from "src/modules/urgencias/application/ports/ingreso-service.interface";
+import { IPacienteService } from "src/modules/pacientes/application/ports/paciente-service.interface";
+import { EnfermeraService } from "src/modules/urgencias/application/services/enfermera.service";
 import { IngresoService } from "src/modules/urgencias/application/services/ingreso.service";
 import { PacienteService } from "src/modules/pacientes/application/services/paciente.service";
 import { Enfermera } from "src/modules/urgencias/domain/entities/enfermera.entity";
@@ -7,6 +11,7 @@ import { ObraSocial } from "src/modules/pacientes/domain/entities/obra-social.en
 import { Domicilio } from "src/modules/pacientes/domain/value-objects/domicilio.vo";
 import { NivelEmergencia } from "src/modules/urgencias/domain/value-objects/nivel-emergencia.enum";
 import { SignosVitales } from "src/modules/urgencias/domain/value-objects/signos-vitales.vo";
+import { EnfermeraRepositoryMock } from "test/mocks/enfermera-repository.mock";
 import { IngresoRepositoryMock } from "test/mocks/ingreso-repository.mock";
 import { PacienteRepositoryMock } from "test/mocks/paciente-repository.mock";
 import { Paciente } from "src/modules/pacientes/domain/entities/paciente.entity";
@@ -15,8 +20,9 @@ import { ObraSocialRepositoryMock } from "test/mocks/obra-social-repository.mock
 import { AfiliadoRepositoryMock } from "test/mocks/afiliado-repository.mock";
 
 export class CustomWorld {
-  ingresoServicio: IngresoService;
-  pacienteServicio: PacienteService;
+  ingresoServicio: IIngresoService;
+  pacienteServicio: IPacienteService;
+  enfermeraServicio: IEnfermeraService;
 
   paciente: Paciente | null = null;
   // Los comento porque no definimos en la feature que algun paciente está afiliado a alguna obra social
@@ -53,9 +59,11 @@ export class CustomWorld {
     const pacienteRepo = new PacienteRepositoryMock();
     const obraSocialRepo = new ObraSocialRepositoryMock();
     const afiliadoRepo = new AfiliadoRepositoryMock();
+    const enfermeraRepo = new EnfermeraRepositoryMock();
 
-    this.ingresoServicio = new IngresoService(ingresoRepo);
     this.pacienteServicio = new PacienteService(pacienteRepo, obraSocialRepo, afiliadoRepo);
+    this.ingresoServicio = new IngresoService(ingresoRepo);
+    this.enfermeraServicio = new EnfermeraService(enfermeraRepo);
   }
 
   reset(): void {
