@@ -1,4 +1,6 @@
-export class Enfermera {
+import { User } from "src/modules/user/domain/user.entity";
+
+export class Enfermera extends User{
 
   private cuil: string;
   private apellido: string;
@@ -6,6 +8,7 @@ export class Enfermera {
   private matricula: string;
 
   constructor(cuil: string, apellido: string, nombre: string, matricula: string) {
+    super();
     this.cuil = cuil;
     this.apellido = apellido;
     this.nombre = nombre;
