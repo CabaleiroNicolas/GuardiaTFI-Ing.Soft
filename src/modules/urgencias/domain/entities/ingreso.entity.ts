@@ -1,9 +1,8 @@
+import { Paciente } from "src/modules/pacientes/domain/entities/paciente.entity";
 import { EstadoIngreso } from "../value-objects/estado-ingreso.enum";
 import { NivelEmergencia } from "../value-objects/nivel-emergencia.enum";
 import { SignosVitales } from "../value-objects/signos-vitales.vo";
 import { Enfermera } from "./enfermera.entity";
-import { Paciente } from "./paciente.entity";
-
 
 export class Ingreso {
   private paciente: Paciente;
@@ -24,7 +23,6 @@ export class Ingreso {
     this.estado = EstadoIngreso.PENDIENTE;
   }
    
-
   getPaciente(): Paciente {
     return this.paciente;
   }

@@ -15,21 +15,19 @@ export class Enfermera extends User{
     this.matricula = matricula;
   }
 
-    getCuil(): string{
+  getCuil(): string {
     return this.cuil;
   }
 
-    getApellido(): string{
+  getApellido(): string {
     return this.apellido;
   }
     
-  
-    getNombre(): string{
+  getNombre(): string {
     return this.nombre;
   }
 
-    getMatricula(): string{
+  getMatricula(): string {
     return this.matricula;
   }
-
 }

@@ -2,11 +2,11 @@ import { Given, When, Then, Before } from '@cucumber/cucumber';
 import { expect } from 'chai';
 import { Enfermera } from 'src/modules/urgencias/domain/entities/enfermera.entity';
 import { Ingreso } from 'src/modules/urgencias/domain/entities/ingreso.entity';
-import { Paciente } from 'src/modules/urgencias/domain/entities/paciente.entity';
-import { Domicilio } from 'src/modules/urgencias/domain/value-objects/domicilio.vo';
+import { Domicilio } from 'src/modules/pacientes/domain/value-objects/domicilio.vo';
 import { NivelEmergencia, NivelEmergenciaHelper } from 'src/modules/urgencias/domain/value-objects/nivel-emergencia.enum';
 import { SignosVitales } from 'src/modules/urgencias/domain/value-objects/signos-vitales.vo';
 import { CustomWorld } from 'test/support/world';
+import { Paciente } from 'src/modules/pacientes/domain/entities/paciente.entity';
 
 Before((scenario) => {
   console.log(`\n\nSCENARIO: ${scenario.pickle.name}`);
@@ -23,7 +23,7 @@ Given('los pacientes registrados con los siguientes datos:', function (this: Cus
       numero: p.numero,
       localidad: p.localidad
     };
-    const paciente = new Paciente(p.cuil, p.apellido, p.nombre, domicilio, this.afiliadoMock);
+    const paciente = new Paciente(p.cuil, p.apellido, p.nombre, domicilio, null);
     this.pacienteServicio.registrar(paciente);
   }
 });
@@ -52,7 +52,7 @@ Given('el sistema tiene la siguiente cola de pacientes en espera:', function (th
     const hora = i.horaIngreso.split(":")[0] as number;
     const minutos = i.horaIngreso.split(":")[1] as number;
     const fecha = new Date(2025, 10, 13, hora, minutos);
-    const ingreso = new Ingreso(paciente!,this.enfermeraMock, fecha, this.informeMock, nivelEmergencia, this.signosVitalesMock);
+    const ingreso = new Ingreso(paciente!, this.enfermeraMock!, fecha, this.informeMock, nivelEmergencia, this.signosVitalesMock);
 
     this.ingresoServicio.registrar(ingreso);
   }
@@ -78,7 +78,7 @@ Then('se registra el ingreso del paciente a la cola con estado: Pendiente y hora
   const hora = horaActual.split(":")[0] as number;
   const minutos = horaActual.split(":")[1] as number;
   const fecha = new Date(2025, 10, 13, hora, minutos);
-  const ingreso = new Ingreso(this.paciente!, this.enfermeraMock, fecha, this.datosIngreso.informe, this.nivelEmergencia, signosVitales);
+  const ingreso = new Ingreso(this.paciente!, this.enfermeraMock!, fecha, this.datosIngreso.informe, this.nivelEmergencia, signosVitales);
 
   this.ingresoServicio.registrar(ingreso);
 });
@@ -110,11 +110,10 @@ Then('se registra el nuevo paciente', function (this: CustomWorld) {
   const apellido = this.datosIngreso.apellido;
   const cuil = this.datosIngreso.cuil;
 
-  this.paciente = new Paciente(cuil, apellido, nombre, this.domicilioMock, this.afiliadoMock);
+  this.paciente = new Paciente(cuil, apellido, nombre, this.domicilioMock, null);
   this.pacienteServicio.registrar(this.paciente);
 
   this.paciente = this.pacienteServicio.buscar(cuil);
-
   expect(this.paciente).to.not.be.null;
 });
 
@@ -137,7 +136,7 @@ Then('debo ver un mensaje de error {string}', function (this: CustomWorld, mensa
   const fecha = new Date(2025, 10, 13, 8, 20);
   this.nivelEmergencia = NivelEmergenciaHelper.nivelEmergenciaFromString(this.datosIngreso.nivelEmergencia);
 
-  const ingreso = new Ingreso(this.paciente!,this.enfermeraMock, fecha, this.informeMock, this.nivelEmergencia, signosVitales);
+  const ingreso = new Ingreso(this.paciente!, this.enfermeraMock!, fecha, this.informeMock, this.nivelEmergencia, signosVitales);
 
   const mensaje = this.ingresoServicio.registrar(ingreso);
 
