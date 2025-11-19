@@ -8,16 +8,17 @@ import { Paciente } from 'src/modules/pacientes/domain/entities/paciente.entity'
 import { Domicilio } from 'src/modules/pacientes/domain/value-objects/domicilio.vo';
 import { RegistrarIngresoDto } from '../../domain/value-objects/registrar-ingreso.dto';
 import { NivelEmergencia } from '../../domain/value-objects/nivel-emergencia.enum';
+import { mapIngresoToIngresoDto } from '../../application/mappers/ingreso.mapper';
 
 @Controller('urgencias')
 export class UrgenciasController {
 
   nivelesEmergencia = [
-    { value: NivelEmergencia.CRITICO, descripcion: 'Crítica' },
+    { value: NivelEmergencia.CRITICO, descripcion: 'Critico' },
     { value: NivelEmergencia.EMERGENCIA, descripcion: 'Emergencia' },
     { value: NivelEmergencia.URGENCIA, descripcion: 'Urgencia' },
-    { value: NivelEmergencia.URGENCIA_MENOR, descripcion: 'Urgencia menor' },
-    { value: NivelEmergencia.SIN_URGENCIA, descripcion: 'Sin urgencia' },
+    { value: NivelEmergencia.URGENCIA_MENOR, descripcion: 'Urgencia Menor' },
+    { value: NivelEmergencia.SIN_URGENCIA, descripcion: 'Sin Urgencia' },
   ];
 
   constructor(
@@ -26,6 +27,19 @@ export class UrgenciasController {
     @Inject(PACIENTE_SERVICIO)
     private readonly pacienteService: IPacienteService) { }
 
+  @Get('listar')
+  @Render('listar-ingresos')
+  async listarIngresos() {
+    const ingresos = await this.ingresoService.obtenerIngresosEnEspera();
+    const ingresosDto = ingresos.map(mapIngresoToIngresoDto);
+
+    return {
+      layout: 'layouts/main',
+      title: 'Listado de ingresos',
+      ingresosDto,
+    };
+  }
+  
   @Get('registrar')
   @Render('registrar-ingreso')
   mostrarFormularioRegistro() {
