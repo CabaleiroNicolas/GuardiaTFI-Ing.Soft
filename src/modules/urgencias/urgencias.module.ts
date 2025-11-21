@@ -16,6 +16,7 @@ import { OBRASOCIAL_REPOSITORIO } from '../pacientes/application/ports/obra-soci
 import { ObraSocialRepositoryMock } from 'test/mocks/obra-social-repository.mock';
 import { AFILIADO_REPOSITORIO } from '../pacientes/application/ports/afiliado-repository.interface';
 import { AfiliadoRepositoryMock } from 'test/mocks/afiliado-repository.mock';
+import { IngresoRepositoryPg } from './infrastructure/repositories/ingreso.repository.pg';
 
 @Module({
     controllers: [UrgenciasController],
@@ -34,7 +35,7 @@ import { AfiliadoRepositoryMock } from 'test/mocks/afiliado-repository.mock';
         },
         {
             provide: INGRESO_REPOSITORIO,
-            useClass: IngresoRepositoryMock, // Cambiar por IngresoRepositoryImpl cuando se implemente la real
+            useClass: IngresoRepositoryPg,
         },
         {
             provide: PACIENTE_REPOSITORIO,
@@ -46,11 +47,11 @@ import { AfiliadoRepositoryMock } from 'test/mocks/afiliado-repository.mock';
         },
         {
           provide: OBRASOCIAL_REPOSITORIO,
-          useClass: ObraSocialRepositoryMock,
+          useClass: ObraSocialRepositoryMock, // Cambiar por ObraSocialRepositoryImpl cuando se implemente la real
         },
         {
           provide: AFILIADO_REPOSITORIO,
-          useClass: AfiliadoRepositoryMock,
+          useClass: AfiliadoRepositoryMock, // Cambiar por AfiliadoRepositoryImpl cuando se implemente la real
         }
     ],
     exports: [INGRESO_SERVICIO, PACIENTE_SERVICIO, ENFERMERA_SERVICE]
