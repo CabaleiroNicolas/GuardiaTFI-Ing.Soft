@@ -5,12 +5,14 @@ import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { UrgenciasModule } from './modules/urgencias/urgencias.module';
+import { PacientesModule } from './modules/pacientes/pacientes.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
     UrgenciasModule,
+    PacientesModule,
     ConfigModule.forRoot({ isGlobal: true })
   ],
   controllers: [AppController],

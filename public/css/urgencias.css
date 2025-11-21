@@ -57,6 +57,11 @@ textarea {
     grid-column: 1 / -1;
 }
 
+.section-title {
+  font-size: 1.3rem;
+  font-style: italic;
+}
+
 /* Botón */
 button {
     margin-top: 20px;

@@ -75,7 +75,11 @@ export class UrgenciasController {
 
       if (!paciente) {
         console.log("No se encontró el paciente");
-        Redirect(`pacientes/registrar?cuil=${dto.cuil}`);
+        return res.render('registrar-paciente', {
+          layout: 'layouts/main',
+          title: 'Registrar paciente',
+          cuil: dto.cuil, // TODO: Agregar obras sociales
+        })
       }
 
       const enfermeraMock: Enfermera = new Enfermera("20-44444444-1", "Stoessel", "Martina", "34");
