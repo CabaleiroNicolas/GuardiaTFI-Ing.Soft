@@ -1,5 +1,7 @@
 import { Module, Global, OnApplicationBootstrap, Inject, Logger } from '@nestjs/common';
 import { Pool } from 'pg';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Global()
 @Module({
@@ -35,6 +37,8 @@ export class DatabaseModule implements OnApplicationBootstrap {
         `✅ Conexión a PostgreSQL verificada. Conectado a: ${result.rows[0].current_database}`,
       );
 
+      await this.executeInitScript();
+
     } catch (error) {
       this.logger.error(
         '❌ ERROR CRÍTICO: Fallo al conectar con PostgreSQL.',
@@ -43,5 +47,25 @@ export class DatabaseModule implements OnApplicationBootstrap {
      
       process.exit(1);
     }
+  }
+
+  private async executeInitScript() {
+
+    const initScriptPath = path.resolve(__dirname, '..', '..', 'database', 'schema', '000_schema_inicial.sql');
+    
+    let sqlScript: string;
+    try {
+        sqlScript = fs.readFileSync(initScriptPath, 'utf8');
+
+    } catch (readError) {
+        this.logger.warn(`⚠️ Archivo SQL inicial no encontrado en ${initScriptPath}. Saltando inicialización.`);
+        // No salimos si no se encuentra el archivo, ya que puede ser opcional
+        return; 
+    }
+
+    //Ejecutar todas las sentencias del script
+    // Usamos pool.query() que maneja scripts multilínea en pg
+    await this.pool.query(sqlScript);
+    this.logger.log('✨ Script de inicialización ejecutado satisfactoriamente.');
   }
 }
