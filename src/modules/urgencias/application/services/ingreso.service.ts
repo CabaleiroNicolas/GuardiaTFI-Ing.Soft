@@ -43,8 +43,8 @@ export class IngresoService implements IIngresoService {
       throw new Error("El valor de la frecuencia respiratoria no puede ser negativo");
   }
 
-  obtenerIngresosEnEspera(): Ingreso[] {
-    let colaPacientes = this.ingresoRepo.obtenerTodos(EstadoIngreso.PENDIENTE);
+  async obtenerIngresosEnEspera(): Promise<Ingreso[]> {
+    let colaPacientes = await this.ingresoRepo.obtenerTodos(EstadoIngreso.PENDIENTE);
     return this.ordenarIngresosEnEspera(colaPacientes);
   }
 
@@ -58,7 +58,7 @@ export class IngresoService implements IIngresoService {
     })
   }
 
-  registrar(ingreso: Ingreso): string {
+  async registrar(ingreso: Ingreso): Promise<string> {
     try {
       this.comprobarCampos(ingreso);
     }

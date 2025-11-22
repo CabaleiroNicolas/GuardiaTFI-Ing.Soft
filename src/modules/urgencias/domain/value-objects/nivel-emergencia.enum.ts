@@ -25,4 +25,21 @@ export class NivelEmergenciaHelper {
         throw new Error(`Nivel de emergencia inválido: "${nivelEmergenciaStr}"`);
     }
   }
+
+  static nivelEmergenciaToNumber(nivelEmergenciaStr: string): number {
+    switch (nivelEmergenciaStr) {
+      case 'Critico':
+        return 0;
+      case 'Emergencia':
+        return 1;
+      case 'Urgencia':
+        return 2;
+      case 'Urgencia Menor':
+        return 3;
+      case 'Sin Urgencia':
+        return 4;
+      default:
+        throw new Error(`Nivel de emergencia inválido: "${nivelEmergenciaStr}"`);
+    }
+  }
 }

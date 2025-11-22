@@ -6,16 +6,15 @@ export class IngresoRepositoryMock implements IIngresoRepository {
   
   private ingresosEnEspera: Ingreso[] = [];
 
-  modificar(ingreso: Ingreso): boolean {
+  async modificar(ingreso: Ingreso): Promise<void> {
     throw new Error("No implementado");
   }
 
-  obtenerTodos(estado: EstadoIngreso = EstadoIngreso.PENDIENTE): Ingreso[] {
+  async obtenerTodos(estado: EstadoIngreso = EstadoIngreso.PENDIENTE): Promise<Ingreso[]> {
     return this.ingresosEnEspera.filter(i => i.getEstado() == estado);
   }
 
-  registrar(ingreso: Ingreso): boolean {
+  async registrar(ingreso: Ingreso): Promise<void> {
     this.ingresosEnEspera.push(ingreso);
-    return true;
   }
 }

@@ -83,11 +83,11 @@ Then('se registra el ingreso del paciente a la cola con estado: Pendiente y hora
   this.ingresoServicio.registrar(ingreso);
 });
 
-Then('la cola de espera de pacientes es:', function (this: CustomWorld, dataTable) {
+Then('la cola de espera de pacientes es:', async function (this: CustomWorld, dataTable) {
 
   const ingresosEsperados = JSON.stringify(dataTable.hashes());
 
-  const ingresosActuales = JSON.stringify(this.ingresoServicio.obtenerIngresosEnEspera().map(i => {
+  const ingresosActuales = JSON.stringify((await this.ingresoServicio.obtenerIngresosEnEspera()).map(i => {
     const paciente = i.getPaciente();
     return { nombre: `${paciente.getNombre()} ${paciente.getApellido()}` };
   }));
@@ -123,7 +123,7 @@ Then('se registra el nuevo paciente', function (this: CustomWorld) {
 // SCENARIO: Ingreso de paciente cargando frecuencia respiratoria con valor negativo
 // SCENARIO: Ingreso a urgencias de paciente existente con datos incompletos
 
-Then('debo ver un mensaje de error {string}', function (this: CustomWorld, mensajeErrorEsperado) {
+Then('debo ver un mensaje de error {string}', async function (this: CustomWorld, mensajeErrorEsperado) {
   const signosVitales: SignosVitales = {
     temperatura: this.datosIngreso.temperatura,
     frecCardiaca: this.datosIngreso.frecuenciaCardiaca,
@@ -138,7 +138,7 @@ Then('debo ver un mensaje de error {string}', function (this: CustomWorld, mensa
 
   const ingreso = new Ingreso(this.paciente!, this.enfermeraMock!, fecha, this.informeMock, this.nivelEmergencia, signosVitales);
 
-  const mensaje = this.ingresoServicio.registrar(ingreso);
+  const mensaje = await this.ingresoServicio.registrar(ingreso);
 
   expect(mensaje).to.be.equal(mensajeErrorEsperado);
 });
