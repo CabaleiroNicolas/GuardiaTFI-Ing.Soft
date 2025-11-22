@@ -61,15 +61,15 @@ export class UrgenciasController {
       // console.log("nivelEmergencia " + dto.nivelEmergencia);
       // console.log("informe " + dto.informe);
       
-      const domicilio: Domicilio = {
-        calle: "Las Heras",
-        numero: 955,
-        localidad: "San Miguel de Tucumán"
-      }
-      const pacienteBD = new Paciente("20-12345678-1", "Perez", "Juan", domicilio, null);
-      this.pacienteService.registrar(pacienteBD);
+      // const domicilio: Domicilio = {
+      //   calle: "Las Heras",
+      //   numero: 955,
+      //   localidad: "San Miguel de Tucumán"
+      // }
+      // const pacienteBD = new Paciente("20-12345678-1", "Perez", "Juan", domicilio, null);
+      // this.pacienteService.registrar(pacienteBD);
 
-      const paciente = this.pacienteService.buscar(dto.cuil);
+      const paciente = await this.pacienteService.buscar(dto.cuil);
 
       // console.log("cuil " + paciente?.getCuil())
 

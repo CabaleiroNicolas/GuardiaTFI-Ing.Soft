@@ -8,10 +8,10 @@ import { Pool } from 'pg';
       provide: 'PG_POOL',
       useFactory: async () => {
         return new Pool({
-          user: 'postgres',        // tu usuario
+          user: 'test',
           host: 'localhost',
-          database: 'guardia_tfi',     // tu base de datos
-          password: '1234',
+          database: 'guardia_bd',
+          password: 'test',
           port: 5432,
         });
       },

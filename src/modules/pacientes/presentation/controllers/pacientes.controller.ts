@@ -59,11 +59,13 @@ export class PacientesController {
 
     // TODO: Validar existencia del paciente con el cuil indicado
 
-    const obra = obras.find(o => o.getId() === dto.obraSocial);
-    const afiliado: Afiliado = {
-      numeroAfiliado: dto.numeroAfiliado,
-      obraSocial: obra!
-    }
+    const obra = dto.obraSocial ? obras.find(o => o.getId() === dto.obraSocial) : null;
+    const afiliado: Afiliado | null = obra !== null
+      ? {
+          numeroAfiliado: dto.numeroAfiliado,
+          obraSocial: obra!
+        }
+      : null;
     const domicilio: Domicilio = {
       calle: dto.calle,
       numero: dto.numero,
@@ -75,7 +77,6 @@ export class PacientesController {
     try {
       await this.pacienteService.registrar(paciente);
       console.log("Paciente registrado correctamente");
-      console.log(this.pacienteService.obtenerPacientesRegistrados());
 
       return {
         layout: 'layouts/main',
