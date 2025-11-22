@@ -27,44 +27,44 @@ describe('PacienteService', () => {
 
   // Criterio de aceptación 1
   describe('PacienteService.registrar', () => {
-    it('si el paciente tiene todos los datos mandatorios provistos y una obra social existente, debería registrarse exitosamente', () => {
+    it('si el paciente tiene todos los datos mandatorios provistos y una obra social existente, debería registrarse exitosamente', async () => {
       // Arrange
       const obraSocial: ObraSocial = new ObraSocial('1', 'Obra social x');
       const paciente = crearPaciente(obraSocial);
-      obraSocialRepo.registrar(obraSocial);
-      afiliadoRepo.registrar(paciente.getObraSocial()!);
+      await obraSocialRepo.registrar(obraSocial);
+      await afiliadoRepo.registrar(paciente.getObraSocial()!);
 
       // Act + Assert
-      expect(() => service.registrar(paciente)).not.toThrow();
-      const pacienteRegistrado = pacienteRepo.obtener(paciente.getCuil());
+      await service.registrar(paciente);
+      const pacienteRegistrado = await pacienteRepo.obtener(paciente.getCuil());
       expect(pacienteRegistrado).not.toBeNull();
     });
 
     // Criterio de aceptación 2
-    it('si el paciente tiene todos los datos mandatorios provistos y no tiene obra social, debería registrarse exitosamente', () => {
+    it('si el paciente tiene todos los datos mandatorios provistos y no tiene obra social, debería registrarse exitosamente', async () => {
       // Arrange
       const paciente = crearPaciente();
 
       // Act + Assert
-      expect(() => service.registrar(paciente)).not.toThrow();
-      const pacienteRegistrado = pacienteRepo.obtener(paciente.getCuil());
+      await service.registrar(paciente);
+      const pacienteRegistrado = await pacienteRepo.obtener(paciente.getCuil());
       expect(pacienteRegistrado).not.toBeNull();
     });
 
     // Criterio de aceptación 3
-    it('si el paciente tiene todos los datos mandatorios provistos y una obra social inexistente, debería notificarse un mensaje de error', () => {
+    it('si el paciente tiene todos los datos mandatorios provistos y una obra social inexistente, debería notificarse un mensaje de error', async () => {
       // Arrange
       const obraSocialExistente = new ObraSocial('1', 'Obra social x');
       const obraSocialInexistente = new ObraSocial('2', 'Obra social y');
       const paciente = crearPaciente(obraSocialInexistente);
-      obraSocialRepo.registrar(obraSocialExistente);
+      await obraSocialRepo.registrar(obraSocialExistente);
 
       // Act + Assert
-      expect(() => service.registrar(paciente)).toThrow("Obra social inexistente");
+      await expect(service.registrar(paciente)).rejects.toThrow("Obra social inexistente");
     });
 
     // Criterio de aceptación 4
-    it('si el paciente tiene todos los datos mandatorios y una obra social existente a la cual no esta afiliado, debería notificarse un mensaje de error indicando que el paciente no esta afiliado a la obra social', () => {
+    it('si el paciente tiene todos los datos mandatorios y una obra social existente a la cual no esta afiliado, debería notificarse un mensaje de error indicando que el paciente no esta afiliado a la obra social', async () => {
       // Arrange
       const obraSocialAfiliada = new ObraSocial('1', 'Obra social x');
       const obraSocialNoAfiliada = new ObraSocial('2', 'Obra social y');
@@ -77,16 +77,16 @@ describe('PacienteService', () => {
         obraSocial: obraSocialNoAfiliada,
       }
       const paciente = crearPaciente(obraSocialNoAfiliada);
-      afiliadoRepo.registrar(afiliadoExistente);
-      obraSocialRepo.registrar(obraSocialAfiliada);
-      obraSocialRepo.registrar(obraSocialNoAfiliada);
+      await afiliadoRepo.registrar(afiliadoExistente);
+      await obraSocialRepo.registrar(obraSocialAfiliada);
+      await obraSocialRepo.registrar(obraSocialNoAfiliada);
 
       // Act + Assert
-      expect(() => service.registrar(paciente)).toThrow("El paciente no está afiliado a la obra social");
+      await expect(service.registrar(paciente)).rejects.toThrow("El paciente no está afiliado a la obra social");
     });
 
     // Criterio de aceptación 5
-    it('si el paciente tiene algun dato mandatorio omitido, debería notificarse un mensaje de error indicando el campo que se omitió durante el registro del paciente.', () => {
+    it('si el paciente tiene algun dato mandatorio omitido, debería notificarse un mensaje de error indicando el campo que se omitió durante el registro del paciente.', async () => {
       // Arrange
       const domicilioCompleto: Domicilio = { calle: 'Calle x', numero: 13, localidad: 'Tucumán' };
       const domicilioSinCalle: Domicilio = { calle: '', numero: 13, localidad: 'Tucumán' };
@@ -100,23 +100,23 @@ describe('PacienteService', () => {
       const pacienteSinLocalidad = new Paciente('20-12345678-1', 'Perez', 'Juan', domicilioSinLocalidad, null);
 
       // Act + Assert
-      expect(() => service.registrar(pacienteSinCuil)).toThrow("El campo cuit no puede estar vacío");
-      expect(() => service.registrar(pacienteSinApellido)).toThrow("El campo apellido no puede estar vacío");
-      expect(() => service.registrar(pacienteSinNombre)).toThrow("El campo nombre no puede estar vacío");
-      expect(() => service.registrar(pacienteSinCalle)).toThrow("El campo calle no puede estar vacío");
-      expect(() => service.registrar(pacienteSinNumero)).toThrow("El campo numero no puede estar vacío");
-      expect(() => service.registrar(pacienteSinLocalidad)).toThrow("El campo localidad no puede estar vacío");
+      await expect(service.registrar(pacienteSinCuil)).rejects.toThrow("El campo cuit no puede estar vacío");
+      await expect(service.registrar(pacienteSinApellido)).rejects.toThrow("El campo apellido no puede estar vacío");
+      await expect(service.registrar(pacienteSinNombre)).rejects.toThrow("El campo nombre no puede estar vacío");
+      await expect(service.registrar(pacienteSinCalle)).rejects.toThrow("El campo calle no puede estar vacío");
+      await expect(service.registrar(pacienteSinNumero)).rejects.toThrow("El campo numero no puede estar vacío");
+      await expect(service.registrar(pacienteSinLocalidad)).rejects.toThrow("El campo localidad no puede estar vacío");
     })
 
     // Criterio de aceptación: validación de formato de cuil del paciente
-    it('si el paciente tiene un formato de cuil inválido, debería notificarse un mensaje de error', () => {
+    it('si el paciente tiene un formato de cuil inválido, debería notificarse un mensaje de error', async () => {
       // Arrange
       const cuilMalFormateado = '20123456781';
       const domicilio = { calle: 'Calle x', numero: 13, localidad: 'Tucumán' };
       const paciente = new Paciente(cuilMalFormateado, 'Perez', 'Juan', domicilio, null);
 
       // Act + Assert
-      expect(() => service.registrar(paciente)).toThrow("Formato de CUIL incorrecto");
+      await expect(service.registrar(paciente)).rejects.toThrow("Formato de CUIL incorrecto");
     })
 
     function crearPaciente(obraSocial?: ObraSocial): Paciente {

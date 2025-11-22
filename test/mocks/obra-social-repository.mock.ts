@@ -5,11 +5,11 @@ export class ObraSocialRepositoryMock implements IObraSocialRepository {
 
   private obrasSocialesRegistradas: ObraSocial[] = [];
 
-  modificar(obraSocial: ObraSocial): boolean {
+  async modificar(obraSocial: ObraSocial): Promise<void> {
     throw new Error("No implementado");
   }
 
-  obtener(id: string): ObraSocial | null {
+  async obtener(id: string): Promise<ObraSocial | null> {
     const obraSocial: ObraSocial | undefined = this.obrasSocialesRegistradas.find(os => os.getId() == id);
 
     if (!obraSocial) return null;
@@ -17,12 +17,11 @@ export class ObraSocialRepositoryMock implements IObraSocialRepository {
     return obraSocial;
   }
 
-  obtenerTodos(): ObraSocial[] {
+  async obtenerTodos(): Promise<ObraSocial[]> {
     return this.obrasSocialesRegistradas;
   }
 
-  registrar(obraSocial: ObraSocial): boolean {
+  async registrar(obraSocial: ObraSocial): Promise<void> {
     this.obrasSocialesRegistradas.push(obraSocial);
-    return true;
   }
 }
