@@ -3,8 +3,8 @@ import { Afiliado } from "../../domain/value-objects/afiliado.vo";
 export const AFILIADO_REPOSITORIO = Symbol('AFILIADO_REPOSITORIO');
 
 export interface IAfiliadoRepository {
-    modificar(afiliado: Afiliado): boolean;
-    obtener(numeroAfiliado: string): Afiliado | null;
-    obtenerTodos(): Afiliado[];
-    registrar(afiliado: Afiliado): void;
+    modificar(afiliado: Afiliado): Promise<void>;
+    obtener(numeroAfiliado: string): Promise<Afiliado | null>;
+    obtenerTodos(): Promise<Afiliado[]>;
+    registrar(afiliado: Afiliado): Promise<void>;
 }

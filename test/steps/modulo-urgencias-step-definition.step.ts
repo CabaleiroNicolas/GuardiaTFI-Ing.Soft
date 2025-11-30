@@ -43,11 +43,11 @@ Given('existe una enfermera registrada con los siguientes datos:', function (thi
 // SCENARIO: Ingreso de paciente con menor nivel de emergencia
 // SCENARIO: Ingreso de paciente con igual nivel de emergencia
 
-Given('el sistema tiene la siguiente cola de pacientes en espera:', function (this: CustomWorld, dataTable) {
+Given('el sistema tiene la siguiente cola de pacientes en espera:', async function (this: CustomWorld, dataTable) {
   const ingresos = dataTable.hashes();
 
   for (const i of ingresos) {
-    const paciente = this.pacienteServicio.buscar(i.cuil);
+    const paciente = await this.pacienteServicio.buscar(i.cuil);
     const nivelEmergencia: NivelEmergencia = NivelEmergenciaHelper.nivelEmergenciaFromString(i.nivelEmergencia);
     const hora = i.horaIngreso.split(":")[0] as number;
     const minutos = i.horaIngreso.split(":")[1] as number;
@@ -58,10 +58,10 @@ Given('el sistema tiene la siguiente cola de pacientes en espera:', function (th
   }
 });
 
-When('el paciente ingresa a urgencias con los siguientes datos:', function (this: CustomWorld, dataTable) {
+When('el paciente ingresa a urgencias con los siguientes datos:', async function (this: CustomWorld, dataTable) {
   this.datosIngreso = dataTable.hashes()[0];
   this.nivelEmergencia = NivelEmergenciaHelper.nivelEmergenciaFromString(this.datosIngreso.nivelEmergencia);
-  this.paciente = this.pacienteServicio.buscar(this.datosIngreso.cuil);
+  this.paciente = await this.pacienteServicio.buscar(this.datosIngreso.cuil);
 });
 
 Then('se registra el ingreso del paciente a la cola con estado: Pendiente y hora actual {string}', function (this: CustomWorld, horaActual) {
@@ -99,21 +99,21 @@ Then('la cola de espera de pacientes es:', async function (this: CustomWorld, da
 
 // SCENARIO: Ingreso de urgencias de paciente no existente
 
-When('un paciente ingresa a urgencias con los siguientes datos:', function (this: CustomWorld, dataTable) {
+When('un paciente ingresa a urgencias con los siguientes datos:', async function (this: CustomWorld, dataTable) {
   this.datosIngreso = dataTable.hashes()[0];
-  this.paciente = this.pacienteServicio.buscar(this.datosIngreso.cuil);
+  this.paciente = await this.pacienteServicio.buscar(this.datosIngreso.cuil);
   expect(this.paciente).to.be.null;
 });
 
-Then('se registra el nuevo paciente', function (this: CustomWorld) {
+Then('se registra el nuevo paciente', async function (this: CustomWorld) {
   const nombre = this.datosIngreso.nombre;
   const apellido = this.datosIngreso.apellido;
   const cuil = this.datosIngreso.cuil;
 
   this.paciente = new Paciente(cuil, apellido, nombre, this.domicilioMock, null);
-  this.pacienteServicio.registrar(this.paciente);
+  await this.pacienteServicio.registrar(this.paciente);
 
-  this.paciente = this.pacienteServicio.buscar(cuil);
+  this.paciente = await this.pacienteServicio.buscar(cuil);
   expect(this.paciente).to.not.be.null;
 });
 

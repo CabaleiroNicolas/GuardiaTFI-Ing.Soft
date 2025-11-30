@@ -8,15 +8,15 @@ export class ObraSocialService implements IObraSocialService {
     private readonly obraSocialRepo: IObraSocialRepository
   ) { }
   
-  buscar(id: string): ObraSocial | null {
+  async buscar(id: string): Promise<ObraSocial | null> {
     return this.obraSocialRepo.obtener(id);
   }
 
-  modificar(obraSocial: ObraSocial): boolean {
+  async modificar(obraSocial: ObraSocial): Promise<void> {
     throw new Error("Method not implemented.");
   }
 
-  registrar(obraSocial: ObraSocial): boolean {
+  async registrar(obraSocial: ObraSocial): Promise<void> {
     throw new Error("Method not implemented.");
   }
 }

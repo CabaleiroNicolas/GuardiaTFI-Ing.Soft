@@ -5,21 +5,21 @@ export class AfiliadoRepositoryMock implements IAfiliadoRepository {
   
   private afiliadosRegistrados: Afiliado[] = [];
 
-  modificar(afiliado: Afiliado): boolean {
+  async modificar(afiliado: Afiliado): Promise<void> {
     throw new Error("No implementado");
   }
   
-  obtener(numeroAfiliado: string): Afiliado | null {
+  async obtener(numeroAfiliado: string): Promise<Afiliado | null> {
     let afiliado = this.afiliadosRegistrados.find(a => a.numeroAfiliado === numeroAfiliado);
     
     return afiliado ? afiliado : null;
   }
   
-  obtenerTodos(): Afiliado[] {
+  async obtenerTodos(): Promise<Afiliado[]> {
     throw new Error("No implementado");
   }
   
-  registrar(afiliado: Afiliado): void {
+  async registrar(afiliado: Afiliado): Promise<void> {
     this.afiliadosRegistrados.push(afiliado);
   }
 }

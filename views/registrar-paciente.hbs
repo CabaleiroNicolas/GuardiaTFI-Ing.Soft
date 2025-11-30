@@ -1,0 +1,80 @@
+{{!registrar-paciente.hbs}}
+
+<div class="form-container">
+    <h1>Registrar paciente</h1>
+
+    {{#if errores}}
+        <div class="alert alert-danger">
+            <ul>
+                {{#each errores}}
+                    <li>{{this}}</li>
+                {{/each}}
+            </ul>
+        </div>
+    {{/if}}
+
+    {{#if success}}
+        <div class="alert alert-success">
+            {{success}}
+        </div>
+    {{/if}}
+
+    <form action="/pacientes/registrar" method="POST">
+        <div class="form-grid">
+
+            <div>
+                <label for="cuil">CUIL</label>
+                <input type="text" id="cuil" name="cuil" value="{{cuil}}" required>
+            </div>
+
+            <div>
+                <label for="apellido">Apellido</label>
+                <input type="text" id="apellido" name="apellido" required>
+            </div>
+
+            <div>
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+
+            <div class="grid-full">
+              <label for="" class="section-title">Domicilio</label>
+              <div class="form-grid">
+                  <div>
+                    <label for="calle">Calle</label>
+                    <input type="text" id="calle" name="calle" required>
+                  </div>
+
+                  <div>
+                    <label for="numero">Número</label>
+                    <input type="number" id="numero" name="numero" required>
+                  </div>
+                
+                  <div>
+                    <label for="nombre">Localidad</label>
+                    <input type="text" id="localidad" name="localidad" required>
+                  </div>
+              </div>
+            </div>
+            
+
+            <div class="grid-full">
+                <label for="obraSocial">Obra Social (opcional)</label>
+                <select name="obraSocial" id="obraSocial">
+                    <option value="">Sin obra social</option>
+                    {{#each obras}}
+                        <option value="{{this.id}}">{{this.nombre}}</option>
+                    {{/each}}
+                </select>
+            </div>
+
+            <div>
+                <label for="numeroAfiliado">N° Afiliado (si corresponde)</label>
+                <input type="text" name="numeroAfiliado" id="numeroAfiliado">
+            </div>
+
+        </div>
+
+        <button type="submit">Registrar paciente</button>
+    </form>
+</div>

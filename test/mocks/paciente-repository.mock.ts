@@ -5,22 +5,21 @@ export class PacienteRepositoryMock implements IPacienteRepository {
   
   private pacientesRegistrados: Paciente[] = [];
 
-  modificar(paciente: Paciente): boolean {
+  async modificar(paciente: Paciente): Promise<void> {
     throw new Error("No implementado");
   }
 
-  obtener(cuil: string): Paciente | null {
+  async obtener(cuil: string): Promise<Paciente | null> {
     const paciente: Paciente | undefined = this.pacientesRegistrados.find(p => p.getCuil() == cuil);
     if(!paciente)return null;
     return paciente;
   }
 
-  obtenerTodos(): Paciente[] {
+  async obtenerTodos(): Promise<Paciente[]> {
     return this.pacientesRegistrados;
   }
 
-  registrar(paciente: Paciente): boolean {
+  async registrar(paciente: Paciente): Promise<void> {
     this.pacientesRegistrados.push(paciente);
-    return true;
   }
 }

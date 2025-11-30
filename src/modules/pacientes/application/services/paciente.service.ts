@@ -18,11 +18,11 @@ export class PacienteService implements IPacienteService {
       private readonly afiliadoRepo: IAfiliadoRepository
     ) {}
     
-    buscar(cuil: string): Paciente | null {
-      return this.pacienteRepo.obtener(cuil);
+    async buscar(cuil: string): Promise<Paciente | null> {
+      return await this.pacienteRepo.obtener(cuil);
     }
   
-    comprobarCampos(paciente: Paciente): void {
+    async comprobarCampos(paciente: Paciente): Promise<void> {
       const cuil = paciente.getCuil();
       const apellido = paciente.getApellido();
       const nombre = paciente.getNombre();
@@ -51,14 +51,14 @@ export class PacienteService implements IPacienteService {
         throw new Error("Formato de CUIL incorrecto");
       
       if (afiliado != null)
-        this.comprobarAfiliado(afiliado)
+        await this.comprobarAfiliado(afiliado)
     }
   
-    comprobarAfiliado(afiliado: Afiliado): void {
+    async comprobarAfiliado(afiliado: Afiliado): Promise<void> {
       const obraSocial = afiliado.obraSocial;
-      const afiliadoBuscado = this.afiliadoRepo.obtener(afiliado.numeroAfiliado);
+      const afiliadoBuscado = await this.afiliadoRepo.obtener(afiliado.numeroAfiliado);
 
-      if (!this.obraSocialRepo.obtener(obraSocial.getId())) {
+      if (!(await this.obraSocialRepo.obtener(obraSocial.getId()))) {
         throw new Error("Obra social inexistente");
       }
 
@@ -71,18 +71,18 @@ export class PacienteService implements IPacienteService {
       }
     }
   
-    modificar(paciente: Paciente): boolean {
+    async modificar(paciente: Paciente): Promise<void> {
       throw new Error("No implementado");
     }
   
-    obtenerPacientesRegistrados(): Paciente[] {
-      return this.pacienteRepo.obtenerTodos();
+    async obtenerPacientesRegistrados(): Promise<Paciente[]> {
+      return await this.pacienteRepo.obtenerTodos();
     }
   
-    registrar(paciente: Paciente): void {
+    async registrar(paciente: Paciente): Promise<void> {
       try {
-        this.comprobarCampos(paciente);
-        this.pacienteRepo.registrar(paciente);
+        await this.comprobarCampos(paciente);
+        await this.pacienteRepo.registrar(paciente);
       }
       catch (error) {
         throw new Error(`ERROR: ${error.message}`)

@@ -61,21 +61,25 @@ export class UrgenciasController {
       // console.log("nivelEmergencia " + dto.nivelEmergencia);
       // console.log("informe " + dto.informe);
       
-      const domicilio: Domicilio = {
-        calle: "Las Heras",
-        numero: 955,
-        localidad: "San Miguel de Tucumán"
-      }
-      const pacienteBD = new Paciente("20-12345678-1", "Perez", "Juan", domicilio, null);
-      this.pacienteService.registrar(pacienteBD);
+      // const domicilio: Domicilio = {
+      //   calle: "Las Heras",
+      //   numero: 955,
+      //   localidad: "San Miguel de Tucumán"
+      // }
+      // const pacienteBD = new Paciente("20-12345678-1", "Perez", "Juan", domicilio, null);
+      // this.pacienteService.registrar(pacienteBD);
 
-      const paciente = this.pacienteService.buscar(dto.cuil);
+      const paciente = await this.pacienteService.buscar(dto.cuil);
 
       // console.log("cuil " + paciente?.getCuil())
 
       if (!paciente) {
         console.log("No se encontró el paciente");
-        Redirect(`pacientes/registrar?cuil=${dto.cuil}`);
+        return res.render('registrar-paciente', {
+          layout: 'layouts/main',
+          title: 'Registrar paciente',
+          cuil: dto.cuil, // TODO: Agregar obras sociales
+        })
       }
 
       const enfermeraMock: Enfermera = new Enfermera("20-44444444-1", "Stoessel", "Martina", "34");
