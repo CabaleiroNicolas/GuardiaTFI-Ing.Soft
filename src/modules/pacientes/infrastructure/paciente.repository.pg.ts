@@ -48,6 +48,9 @@ export class PacienteRepositoryPg implements IPacienteRepository {
   }
 
   async registrar(paciente: Paciente): Promise<void> {
+
+    console.log("Registrando paciente en PG");
+
     const query = `INSERT INTO pacientes 
     (cuil, nombre, apellido, calle, numero_direccion, localidad, numero_afiliado, obra_social_id) 
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`;
@@ -65,6 +68,8 @@ export class PacienteRepositoryPg implements IPacienteRepository {
       afiliado?.numeroAfiliado,
       afiliado?.obraSocial.getId()
     ]);
+
+    console.log("Paciente registrado Exitosamente");
   }
 
   private construirPaciente(r: any): Paciente {

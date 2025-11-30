@@ -3,11 +3,11 @@ import { PacientesController } from "./presentation/controllers/pacientes.contro
 import { PACIENTE_SERVICIO } from "./application/ports/paciente-service.interface";
 import { PacienteService } from "./application/services/paciente.service";
 import { PACIENTE_REPOSITORIO } from "./application/ports/paciente-repository.interface";
-import { PacienteRepositoryMock } from "test/mocks/paciente-repository.mock";
 import { OBRASOCIAL_REPOSITORIO } from "./application/ports/obra-social-repository.interface";
 import { ObraSocialRepositoryMock } from "test/mocks/obra-social-repository.mock";
 import { AFILIADO_REPOSITORIO } from "./application/ports/afiliado-repository.interface";
 import { AfiliadoRepositoryMock } from "test/mocks/afiliado-repository.mock";
+import { PacienteRepositoryPg } from "./infrastructure/paciente.repository.pg";
 
 @Module({
   controllers: [PacientesController],
@@ -18,7 +18,7 @@ import { AfiliadoRepositoryMock } from "test/mocks/afiliado-repository.mock";
     },
     {
       provide: PACIENTE_REPOSITORIO,
-      useClass: PacienteRepositoryMock
+      useClass: PacienteRepositoryPg
     },
     {
       provide: OBRASOCIAL_REPOSITORIO,

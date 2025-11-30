@@ -4,6 +4,10 @@ import { IIngresoService } from "../ports/ingreso-service.interface";
 import { IIngresoRepository, INGRESO_REPOSITORIO } from "../ports/ingreso-repository.interface";
 import { NivelEmergencia } from "../../domain/value-objects/nivel-emergencia.enum";
 import { EstadoIngreso } from "../../domain/value-objects/estado-ingreso.enum";
+import { RegistrarIngresoDto } from "../../domain/value-objects/registrar-ingreso.dto";
+import { IPacienteService, PACIENTE_SERVICIO } from "src/modules/pacientes/application/ports/paciente-service.interface";
+import { Paciente } from "src/modules/pacientes/domain/entities/paciente.entity";
+import { Enfermera } from "../../domain/entities/enfermera.entity";
 
 @Injectable()
 export class IngresoService implements IIngresoService {
@@ -12,36 +16,43 @@ export class IngresoService implements IIngresoService {
 
   constructor(
     @Inject(INGRESO_REPOSITORIO)
-    private readonly ingresoRepo: IIngresoRepository
+    private readonly ingresoRepo: IIngresoRepository,
+
+    @Inject(PACIENTE_SERVICIO)
+    private readonly pacienteService: IPacienteService
   ) {
     this.ordenNivelesEmergencia = [NivelEmergencia.CRITICO, NivelEmergencia.EMERGENCIA, NivelEmergencia.URGENCIA, NivelEmergencia.URGENCIA_MENOR, NivelEmergencia.SIN_URGENCIA];
   }
 
-  
-  comprobarCampos(ingreso: Ingreso): void {
-    const signosVitales = ingreso.getSignosVitales();
-    const informe = ingreso.getInforme();
-    const nivelEmergencia = ingreso.getNivelEmergencia();
-    const { tensionArterial } = signosVitales;
 
-    if (
-      !signosVitales.temperatura ||
-      !signosVitales.frecCardiaca ||
-      !signosVitales.frecRespiratoria ||
-      !tensionArterial ||
-      !tensionArterial.frecSistolica ||
-      !tensionArterial.frecDiastolica ||
-      !informe ||
-      !nivelEmergencia
+  async registrar(ingreso: RegistrarIngresoDto, enfermera: Enfermera): Promise<string> {
+
+    const paciente: Paciente = await this.validarPacienete(ingreso.cuil);
+
+    const nuevoIngreso: Ingreso = new Ingreso(
+      paciente,
+      enfermera,
+      new Date(Date.now()),
+      ingreso.informe,
+      NivelEmergencia[ingreso.nivelEmergencia],
+      {
+        temperatura: ingreso.temperatura,
+        frecCardiaca: ingreso.frecCardiaca,
+        frecRespiratoria: ingreso.frecRespiratoria,
+        tensionArterial: {
+          frecSistolica: Number(ingreso.tensionArterial.split('/')[0]),
+          frecDiastolica: Number(ingreso.tensionArterial.split('/')[1])
+        }
+      }
+
     )
-      throw new Error("Hay campos sin completar");
 
-    if (signosVitales.frecCardiaca < 0)
-      throw new Error("El valor de la frecuencia cardíaca no puede ser negativo");
+    await this.ingresoRepo.registrar(nuevoIngreso);
 
-    if (signosVitales.frecRespiratoria < 0)
-      throw new Error("El valor de la frecuencia respiratoria no puede ser negativo");
+    console.log("El ingreso se registró con éxito!");
+    return "Ingreso registrado con éxito";
   }
+
 
   async obtenerIngresosEnEspera(): Promise<Ingreso[]> {
     let colaPacientes = await this.ingresoRepo.obtenerTodos(EstadoIngreso.PENDIENTE);
@@ -49,7 +60,7 @@ export class IngresoService implements IIngresoService {
   }
 
   private ordenarIngresosEnEspera(colaIngresos: Ingreso[]) {
-    return colaIngresos.sort((ingreso1, ingreso2) => { 
+    return colaIngresos.sort((ingreso1, ingreso2) => {
 
       const nivel1 = this.ordenNivelesEmergencia.indexOf(ingreso1.getNivelEmergencia());
       const nivel2 = this.ordenNivelesEmergencia.indexOf(ingreso2.getNivelEmergencia());
@@ -58,16 +69,12 @@ export class IngresoService implements IIngresoService {
     })
   }
 
-  async registrar(ingreso: Ingreso): Promise<string> {
-    try {
-      this.comprobarCampos(ingreso);
+  async validarPacienete(cuil: string): Promise<Paciente> {
+    const paciente = await this.pacienteService.buscar(cuil);
+    if (!paciente) {
+      throw new Error("No se encontró el paciente");
     }
-    catch (error) {
-      return `ERROR: ${error.message}`;
-    }
-
-    this.ingresoRepo.registrar(ingreso);
-
-    return "El ingreso se registró con éxito!";
+    return paciente;
   }
+
 }
