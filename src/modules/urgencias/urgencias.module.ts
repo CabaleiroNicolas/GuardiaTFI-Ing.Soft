@@ -6,10 +6,9 @@ import { ENFERMERA_REPOSITORIO } from './application/ports/enfermera-repository.
 import { ENFERMERA_SERVICE } from './application/ports/enfermera-service.interface';
 import { EnfermeraService } from './application/services/enfermera.service';
 import { EnfermeraRepositoryMock } from 'test/mocks/enfermera-repository.mock';
-import { PACIENTE_SERVICIO } from '../pacientes/application/ports/paciente-service.interface';
-import { UrgenciasController } from './presentation/controllers/urgencias.controller';
 import { IngresoRepositoryPg } from './infrastructure/repositories/ingreso.repository.pg';
 import { PacientesModule } from '../pacientes/pacientes.module';
+import { UrgenciasController } from './infrastructure/urgencias.controller';
 
 @Module({
     controllers: [UrgenciasController],
