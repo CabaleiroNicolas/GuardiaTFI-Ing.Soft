@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule,
     { logger: ['error', 'warn', 'log'], }
   );
-
+  app.enableCors();
   // Archivos públicos (css, imágenes, JS)
   app.useStaticAssets(join(process.cwd(), 'public'));
 
