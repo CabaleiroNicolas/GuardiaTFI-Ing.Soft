@@ -1,4 +1,6 @@
 export interface RegistrarIngresoDto {
+
+  
   cuil: string,
   temperatura: number,
   frecCardiaca: number,

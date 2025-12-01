@@ -49,8 +49,6 @@ export class PacienteRepositoryPg implements IPacienteRepository {
 
   async registrar(paciente: Paciente): Promise<void> {
 
-    console.log("Registrando paciente en PG");
-
     const query = `INSERT INTO pacientes 
     (cuil, nombre, apellido, calle, numero_direccion, localidad, numero_afiliado, obra_social_id) 
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`;
@@ -74,7 +72,6 @@ export class PacienteRepositoryPg implements IPacienteRepository {
 
   private construirPaciente(r: any): Paciente | null {
 
-    console.log(r)
     if(!r.rows || r.rows.length === 0){
       return null
     }
@@ -92,8 +89,6 @@ export class PacienteRepositoryPg implements IPacienteRepository {
       //obraSocial,
       obraSocial:new ObraSocial("1", "")
     };
-
-    console.log("Construyendo paciente:", r);
 
     return new Paciente(result.cuil, result.apellido, result.nombre, domicilio, afiliado, result.id);
   }

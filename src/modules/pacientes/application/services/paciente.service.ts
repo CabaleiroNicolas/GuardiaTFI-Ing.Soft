@@ -5,11 +5,13 @@ import { IPacienteService } from "../ports/paciente-service.interface";
 import { IObraSocialRepository, OBRASOCIAL_REPOSITORIO } from "../ports/obra-social-repository.interface";
 import { AFILIADO_REPOSITORIO, IAfiliadoRepository } from "../ports/afiliado-repository.interface";
 import { Afiliado } from "../../domain/value-objects/afiliado.vo";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { PacienteDto } from "../../domain/value-objects/paciente.dto";
 
 @Injectable()
 export class PacienteService implements IPacienteService {
+
+  private readonly logger = new Logger(PacienteService.name);
 
   constructor(
     @Inject(PACIENTE_REPOSITORIO)
@@ -21,43 +23,39 @@ export class PacienteService implements IPacienteService {
   ) { }
 
   async buscar(cuil: string): Promise<Paciente | null> {
-    const paciente = await this.pacienteRepo.obtener(cuil);
-    if (!paciente) throw new Error("Paciente no encontrado");
-    console.log("Paciente encontrado:", paciente);
+
+    const paciente: Paciente | null = await this.pacienteRepo.obtener(cuil);
+
+    if (!paciente) {
+      this.logger.error("Paciente no encontrado con cuil:", cuil);
+      throw new Error("Paciente no encontrado");
+    }
     return paciente;
   }
 
-  async comprobarCampos(paciente: Paciente): Promise<void> {
-    const cuil = paciente.getCuil();
-    const apellido = paciente.getApellido();
-    const nombre = paciente.getNombre();
-    const domicilio = paciente.getDomicilio();
-    const afiliado = paciente.getObraSocial();
 
-    if (!cuil)
-      throw new Error("El campo cuit no puede estar vacío");
 
-    if (!apellido)
-      throw new Error("El campo apellido no puede estar vacío");
+  async registrar(newPaciente: PacienteDto): Promise<void> {
+    this.logger.log("Comenzando registro de paciente...");
 
-    if (!nombre)
-      throw new Error("El campo nombre no puede estar vacío");
+    const pacienteExistente: Paciente | null = await this.pacienteRepo.obtener(newPaciente.cuil);
+    if (pacienteExistente) {
+      this.logger.error("El Paciente ya está registrado");
+      throw new Error("El Paciente ya está registrado");
+    }
 
-    if (!domicilio.calle)
-      throw new Error("El campo calle no puede estar vacío");
+    const paciente: Paciente = new Paciente(
+      newPaciente.cuil,
+      newPaciente.apellido,
+      newPaciente.nombre,
+      { calle: newPaciente.calle, numero: newPaciente.numero, localidad: newPaciente.localidad },
+      null
+    )
 
-    if (!domicilio.localidad)
-      throw new Error("El campo localidad no puede estar vacío");
-
-    if (!domicilio.numero)
-      throw new Error("El campo numero no puede estar vacío");
-
-    if (!/^(20|27)-\d{8}-\d$/.test(cuil))
-      throw new Error("Formato de CUIL incorrecto");
-
-    if (afiliado != null)
-      await this.comprobarAfiliado(afiliado)
+    await this.pacienteRepo.registrar(paciente);
   }
+
+
 
   async comprobarAfiliado(afiliado: Afiliado): Promise<void> {
     const obraSocial = afiliado.obraSocial;
@@ -82,24 +80,5 @@ export class PacienteService implements IPacienteService {
 
   async obtenerPacientesRegistrados(): Promise<Paciente[]> {
     return await this.pacienteRepo.obtenerTodos();
-  }
-
-  async registrar(newPaciente: PacienteDto): Promise<void> {
-    console.log("Comenzando registro de paciente...");
-    const paciente: Paciente = new Paciente(
-      newPaciente.cuil,
-      newPaciente.apellido,
-      newPaciente.nombre,
-      { calle: newPaciente.calle, numero: newPaciente.numero, localidad: newPaciente.localidad },
-      null
-    )
-
-    try {
-      await this.pacienteRepo.registrar(paciente);
-    }
-    catch (error) {
-      console.log("Error al registrar paciente:", error);
-      throw new Error(`ERROR: ${error.message}`)
-    }
   }
 }

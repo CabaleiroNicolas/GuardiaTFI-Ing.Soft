@@ -1,10 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ENFERMERA_REPOSITORIO, IEnfermeraRepository } from '../ports/enfermera-repository.interface';
 import { IEnfermeraService } from '../ports/enfermera-service.interface';
 import { Enfermera } from '../../domain/entities/enfermera.entity';
 
 @Injectable()
 export class EnfermeraService implements IEnfermeraService {
+
+    private readonly logger = new Logger(EnfermeraService.name);
 
     constructor(
         @Inject(ENFERMERA_REPOSITORIO)
@@ -13,9 +15,11 @@ export class EnfermeraService implements IEnfermeraService {
 
     
     async buscarPorId(enfermeraId: number): Promise<Enfermera> {
-        console.log("Buscando enfermera por ID en servicio:", enfermeraId);
+        this.logger.log("Buscando enfermera por ID en servicio:", enfermeraId);
+
         const enfermera: Enfermera | null = await this.enfermeraRepository.buscarPorId(enfermeraId);
         if(!enfermera){
+            this.logger.error("Enfermera no encontrada con ID:", enfermeraId);
             throw new Error('Enfermera no encontrada.');
         }
         return enfermera;
@@ -26,6 +30,7 @@ export class EnfermeraService implements IEnfermeraService {
         const enfermeras: Enfermera[] = await this.enfermeraRepository.obtenerTodos();
         const existe = enfermeras.some(e => e.getCuil() === enfermera.getCuil());
         if (existe) {
+            this.logger.error("La enfermera ya está registrada con CUIL:", enfermera.getCuil());
             throw new Error('La enfermera ya está registrada.');
         }
         await this.enfermeraRepository.guardar(enfermera);

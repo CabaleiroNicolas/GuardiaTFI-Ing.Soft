@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Inject, Res, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, Inject, Res, UseGuards, Req, Logger } from '@nestjs/common';
 import { RolesGuard } from 'src/modules/auth/infrastructure/guards/role.guard';
 import { Roles } from 'src/modules/auth/infrastructure/decorators/roles.decorator';
 import { UserRole } from 'src/modules/user/domain/value-objects/user-role.enum';
@@ -10,10 +10,12 @@ import { IIngresoService, INGRESO_SERVICIO } from '../application/ports/ingreso-
 @Controller('urgencias')
 export class UrgenciasController {
 
+  private readonly logger = new Logger(UrgenciasController.name);
+
   constructor(
     @Inject(INGRESO_SERVICIO)
     private readonly ingresoService: IIngresoService,
-    ) { }
+  ) { }
 
 
   @Post()
@@ -22,14 +24,16 @@ export class UrgenciasController {
   async registrarIngreso(@Res() res, @Body() dto: RegistrarIngresoDto, @Req() req?: AuthenticatedRequestVO) {
 
     try {
-      console.log("Nueva solicitud de registro de ingreso recibida:");
-      console.log(req?.user)
+      this.logger.log("Nueva solicitud de registro de ingreso recibida:");
       await this.ingresoService.registrar(dto, req!.user.userId);
       res.status(201).send({ message: 'Ingreso registrado con éxito' });
 
     } catch (error) {
-      console.log("Error al registrar ingreso:", error.message);
-      res.status(400).send({ message: 'Paciente no registrado' });
+      this.logger.error("Error al registrar ingreso:", error.message);
+
+      if (error.message.includes('Paciente') || error.message.includes('Enfermera')) {
+        res.status(400).send({ message: `Error con entidad: ${error.message}` });
+      }
     }
   }
 }

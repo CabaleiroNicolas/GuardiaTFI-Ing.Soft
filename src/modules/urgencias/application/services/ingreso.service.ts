@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { Ingreso } from "../../domain/entities/ingreso.entity";
 import { IIngresoService } from "../ports/ingreso-service.interface";
 import { IIngresoRepository, INGRESO_REPOSITORIO } from "../ports/ingreso-repository.interface";
@@ -15,7 +15,7 @@ import { UserRole } from "src/modules/user/domain/value-objects/user-role.enum";
 export class IngresoService implements IIngresoService {
 
   private readonly ordenNivelesEmergencia: NivelEmergencia[];
-  private readonly NivelEmergenciaHelper = new NivelEmergenciaHelper();
+  private readonly logger = new Logger(IngresoService.name);
 
   constructor(
     @Inject(INGRESO_REPOSITORIO)
@@ -31,7 +31,7 @@ export class IngresoService implements IIngresoService {
   }
 
 
-  async registrar(ingreso: RegistrarIngresoDto, enfermeraId: number): Promise<string> {
+  async registrar(ingreso: RegistrarIngresoDto, enfermeraId: number): Promise<void> {
 
     const enfermera: Enfermera = await this.enfermeraService.buscarPorId(enfermeraId);
 
@@ -52,13 +52,10 @@ export class IngresoService implements IIngresoService {
           frecDiastolica: Number(ingreso.tensionArterial.split('/')[1])
         }
       }
-
     )
-
     await this.ingresoRepo.registrar(nuevoIngreso);
 
-    console.log("El ingreso se registró con éxito!");
-    return "Ingreso registrado con éxito";
+    this.logger.log("El ingreso se registró con éxito!");
   }
 
 
