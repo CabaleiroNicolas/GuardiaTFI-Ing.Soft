@@ -9,7 +9,7 @@ export class Enfermera extends User{
   private matricula: string;
 
   constructor(userId: number, email: string, password: string, role: UserRole, cuil: string, apellido: string, nombre: string, matricula: string) {
-    super(userId, email, password, role);
+    super({userId, email, password, role});
     this.cuil = cuil;
     this.apellido = apellido;
     this.nombre = nombre;

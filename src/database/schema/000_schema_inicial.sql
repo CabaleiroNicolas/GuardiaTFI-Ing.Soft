@@ -100,7 +100,7 @@ ON CONFLICT (nombre) DO NOTHING;
 -- 2. Enfermeras
 INSERT INTO enfermeras (cuil, matricula, nombre, apellido, email, password_hash)
 VALUES
-('20-44444444-1', '34', 'Martina', 'Stoessel', 'martina.stoessel@example.com', '$2b$10$CUkC0yKCgfyQpW4duoO4xumgblmXpi3nPMt6HhR9j0GfSKvSgjK12') -- Contraseña: Tini123
+('20-44444444-1', '34', 'Martina', 'Stoessel', 'martina.stoessel@example.com', '$2b$12$JWMFGf/U6A7o9I0RP1GpPuak.dld0uWau1b3VfIjLLdDL1q8igtEi') -- Contraseña: test
 ON CONFLICT (cuil) DO NOTHING; -- Conflict por el campo UNIQUE(cuil)
 
 -- 3. Pacientes

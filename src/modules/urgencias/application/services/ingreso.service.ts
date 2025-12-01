@@ -9,6 +9,7 @@ import { IPacienteService, PACIENTE_SERVICIO } from "src/modules/pacientes/appli
 import { Paciente } from "src/modules/pacientes/domain/entities/paciente.entity";
 import { Enfermera } from "../../domain/entities/enfermera.entity";
 import { ENFERMERA_SERVICE, IEnfermeraService } from "../ports/enfermera-service.interface";
+import { UserRole } from "src/modules/user/domain/value-objects/user-role.enum";
 
 @Injectable()
 export class IngresoService implements IIngresoService {
@@ -32,7 +33,7 @@ export class IngresoService implements IIngresoService {
 
   async registrar(ingreso: RegistrarIngresoDto, enfermeraId: number): Promise<string> {
 
-    const enfermeraMock: Enfermera = new Enfermera("20-44444444-1", "Stoessel", "Martina", "34");
+    const enfermeraMock: Enfermera = new Enfermera(1,"","",UserRole.ENFERMERA, "20-44444444-1", "Stoessel", "Martina", "34");
 
     const paciente: Paciente = await this.validarPacienete(ingreso.cuil);
 

@@ -15,10 +15,13 @@ export class AuthService implements IAuthService {
   ) {}
 
   async validateUser(email: string, rawPassword: string) {
+    console.log("validando usuario")
     const user = await this.userService.findWithPasswordByEmail(email);
     if (!user) return null;
 
+    console.log("usuario encontrado en servicio:", user)
     const isValid: boolean = await bcrypt.compare(rawPassword, user.password!);
+    console.log(isValid)
     if (!isValid) return null;
 
     const { password, ...safe } = user as User & { password?: string };

@@ -4,6 +4,7 @@ import { User } from "../domain/user.entity";
 import { UserRole, UserRoleHelper } from "../domain/value-objects/user-role.enum";
 import { Pool } from "pg";
 import { Enfermera } from "src/modules/urgencias/domain/entities/enfermera.entity";
+import { use } from "chai";
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -25,26 +26,28 @@ export class UserRepository implements IUserRepository {
     } */
 
     async findByEmail(email: string): Promise<User | null> {
-
+        console.log("buscando usuario por email en repo:", email);
         let result: any | null = null;
+        let user : User | null = null;
 
-        const queryEnfermera = `SELECT cuil, email, password_hash, role, matricula, apellido, nombre FROM enfermeras WHERE email = $1 LIMIT 1`;
-        const queryMedico = `SELECT cuil, email, password_hash, role FROM medicos WHERE email = $1 LIMIT 1`;
+        const queryEnfermera = `SELECT id, cuil, email, password_hash, rol, matricula, apellido, nombre FROM enfermeras WHERE email = $1 LIMIT 1`;
+        const queryMedico = `SELECT cuil, email, password_hash, rol FROM medicos WHERE email = $1 LIMIT 1`;
 
-        result = await this.pool.query(queryEnfermera, [email]).rows[0];
+        result = (await this.pool.query(queryEnfermera, [email])).rows[0];
 
         if (!result) {
-            result = await this.pool.query(queryMedico, [email]).rows[0];
+            result = (await this.pool.query(queryMedico, [email])).rows[0];
         }
 
         if (result) {
 
-            if (result.role === 'ENFERMERA') {
-                return new Enfermera(
+            console.log(result.rol)
+            if (result.rol === 'ENFERMERA') {
+                user = new Enfermera(
                     result.id,
                     result.email,
-                    result.password,
-                    UserRoleHelper.userRoleFromString(result.role),
+                    result.password_hash,
+                    UserRoleHelper.userRoleFromString(result.rol),
                     result.cuil,
                     result.apellido,
                     result.nombre,
@@ -52,10 +55,11 @@ export class UserRepository implements IUserRepository {
                 );
             }
             else if (result.role === 'MEDICO') {
-                return new User()
+                user =  new User()
             }
         }
-        return null;
+        console.log("usuario encontrado en repo:", user);
+        return user;
     }
     
 }
