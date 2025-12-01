@@ -13,7 +13,7 @@ export class NivelEmergenciaHelper {
     switch (nivelEmergenciaStr) {
       case 'Critico':
         return NivelEmergencia.CRITICO;
-      case 'CRITICA':
+      case 'CRITICO':
         return NivelEmergencia.CRITICO;
       case 'Emergencia':
         return NivelEmergencia.EMERGENCIA;

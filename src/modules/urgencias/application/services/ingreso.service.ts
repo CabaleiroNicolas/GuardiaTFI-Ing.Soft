@@ -60,21 +60,30 @@ export class IngresoService implements IIngresoService {
 
 
   async obtenerIngresosEnEspera(): Promise<Ingreso[]> {
-    let colaPacientes = await this.ingresoRepo.obtenerTodos(EstadoIngreso.PENDIENTE);
+    let colaPacientes: Ingreso[] = await this.ingresoRepo.obtenerTodos(EstadoIngreso.PENDIENTE);
     return this.ordenarIngresosEnEspera(colaPacientes);
   }
 
   private ordenarIngresosEnEspera(colaIngresos: Ingreso[]) {
-    return colaIngresos.sort((ingreso1, ingreso2) => {
+  return colaIngresos.sort((ingreso1, ingreso2) => {
+    
+    const nivel1 = this.ordenNivelesEmergencia.indexOf(ingreso1.getNivelEmergencia());
+    const nivel2 = this.ordenNivelesEmergencia.indexOf(ingreso2.getNivelEmergencia());
 
-      const nivel1 = this.ordenNivelesEmergencia.indexOf(ingreso1.getNivelEmergencia());
-      const nivel2 = this.ordenNivelesEmergencia.indexOf(ingreso2.getNivelEmergencia());
+    const diferenciaPrioridad = nivel1 - nivel2;
 
-      return nivel1 - nivel2;
-    })
-  }
+    if (diferenciaPrioridad !== 0) {
+      return diferenciaPrioridad;
+    }
 
-  async validarPacienete(cuil: string): Promise<Paciente> {
+    const fecha1 = new Date(ingreso1.getFechaIngreso()).getTime();
+    const fecha2 = new Date(ingreso2.getFechaIngreso()).getTime();
+
+    return fecha1 - fecha2;
+  });
+}
+
+  private async validarPacienete(cuil: string): Promise<Paciente> {
     console.log("Validando paciente con cuil:", cuil);
     const paciente = await this.pacienteService.buscar(cuil);
     if (!paciente) {

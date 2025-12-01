@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS obras_sociales (
 -- ==========================================================
 CREATE TABLE IF NOT EXISTS pacientes (
     id SERIAL PRIMARY KEY,
-    cuil VARCHAR(20) UNIQUE NOT NULL,
+    cuil VARCHAR(11) UNIQUE NOT NULL,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
 
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS pacientes (
 -- ==========================================================
 CREATE TABLE IF NOT EXISTS afiliados (
     id SERIAL PRIMARY KEY,
-    cuil VARCHAR(20) NOT NULL,
+    cuil VARCHAR(11) NOT NULL,
     obra_social_id INTEGER NOT NULL REFERENCES obras_sociales(id) ON DELETE CASCADE,
     numero_afiliado VARCHAR(10) NOT NULL
 );
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS afiliados (
 CREATE TABLE IF NOT EXISTS enfermeras (
     id SERIAL PRIMARY KEY,
     matricula VARCHAR(20) UNIQUE NOT NULL,
-    cuil VARCHAR(20) UNIQUE NOT NULL,
+    cuil VARCHAR(11) UNIQUE NOT NULL,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS ingresos (
     informe TEXT NOT NULL,
 
     -- Nivel de emergencia
-    nivel_emergencia VARCHAR(20) NOT NULL CHECK (nivel_emergencia IN ('CRITICO', 'EMERGENCIA', 'URGENCIA', 'URGENCIA MENOR', 'SIN URGENCIA')),
+    nivel_emergencia VARCHAR(20) NOT NULL CHECK (nivel_emergencia IN ('Critico', 'Emergencia', 'Urgencia', 'Urgencia Menor', 'Sin Urgencia')),
 
     -- Signos vitales
     temperatura NUMERIC(4,1) NOT NULL,
@@ -100,24 +100,24 @@ ON CONFLICT (nombre) DO NOTHING;
 -- 2. Enfermeras
 INSERT INTO enfermeras (cuil, matricula, nombre, apellido, email, password_hash)
 VALUES
-('20-44444444-1', '34', 'Martina', 'Stoessel', 'martina.stoessel@example.com', '$2b$12$JWMFGf/U6A7o9I0RP1GpPuak.dld0uWau1b3VfIjLLdDL1q8igtEi') -- Contraseña: test
+('20444444441', '34', 'Martina', 'Stoessel', 'martina.stoessel@example.com', '$2b$12$JWMFGf/U6A7o9I0RP1GpPuak.dld0uWau1b3VfIjLLdDL1q8igtEi') -- Contraseña: test
 ON CONFLICT (cuil) DO NOTHING; -- Conflict por el campo UNIQUE(cuil)
 
 -- 3. Pacientes
 -- Uso de subselects para garantizar que la clave foránea (obra_social_id) apunte a un ID existente.
 INSERT INTO pacientes (cuil, nombre, apellido, calle, numero_direccion, localidad, numero_afiliado, obra_social_id)
 VALUES
-('20-12345678-1', 'Juan', 'Pérez', 'Las Heras', '955', 'San Miguel de Tucumán', null, (SELECT id FROM obras_sociales WHERE nombre = 'Subsidio')),
-('20-87654321-1', 'María', 'López', 'Monteagudo', '650', 'San Miguel de Tucumán', null, (SELECT id FROM obras_sociales WHERE nombre = 'Subsidio')),
-('20-22222222-1', 'Carlos', 'Ruiz', '25 de Mayo', '320', 'San Miguel de Tucumán', null, NULL) -- NULL para paciente sin obra social
+('20123456781', 'Juan', 'Pérez', 'Las Heras', '955', 'San Miguel de Tucumán', null, (SELECT id FROM obras_sociales WHERE nombre = 'Subsidio')),
+('20876543211', 'María', 'López', 'Monteagudo', '650', 'San Miguel de Tucumán', null, (SELECT id FROM obras_sociales WHERE nombre = 'Subsidio')),
+('20222222221', 'Carlos', 'Ruiz', '25 de Mayo', '320', 'San Miguel de Tucumán', null, NULL) -- NULL para paciente sin obra social
 ON CONFLICT (cuil) DO NOTHING; -- Conflict por el campo UNIQUE(cuil)
 
 -- 4. Afiliados
 INSERT INTO afiliados (cuil, obra_social_id, numero_afiliado)
 VALUES
-    ('20-11111111-1', (SELECT id FROM obras_sociales WHERE nombre = 'OSDE'), '1001'),
-    ('20-22222222-2', (SELECT id FROM obras_sociales WHERE nombre = 'Swiss Medical'), '2001'),
-    ('20-33333333-3', (SELECT id FROM obras_sociales WHERE nombre = 'PAMI'), '3001'),
-    ('20-44444444-4', (SELECT id FROM obras_sociales WHERE nombre = 'Galeno'), '4001'),
-    ('20-55555555-5', (SELECT id FROM obras_sociales WHERE nombre = 'Medicus'), '5001')
+    ('20111111111', (SELECT id FROM obras_sociales WHERE nombre = 'OSDE'), '1001'),
+    ('20222222222', (SELECT id FROM obras_sociales WHERE nombre = 'Swiss Medical'), '2001'),
+    ('20333333333', (SELECT id FROM obras_sociales WHERE nombre = 'PAMI'), '3001'),
+    ('20444444444', (SELECT id FROM obras_sociales WHERE nombre = 'Galeno'), '4001'),
+    ('20555555555', (SELECT id FROM obras_sociales WHERE nombre = 'Medicus'), '5001')
 ON CONFLICT DO NOTHING;
