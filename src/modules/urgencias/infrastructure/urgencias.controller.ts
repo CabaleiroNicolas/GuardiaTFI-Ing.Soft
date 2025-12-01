@@ -32,7 +32,7 @@ export class UrgenciasController {
       this.logger.error("Error al registrar ingreso:", error.message);
 
       if (error.message.includes('Paciente') || error.message.includes('Enfermera')) {
-        res.status(400).send({ message: `Error con entidad: ${error.message}` });
+        res.status(400).send({ message: error.message });
       }
     }
   }
