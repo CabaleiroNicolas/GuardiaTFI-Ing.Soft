@@ -5,10 +5,10 @@ import { INGRESO_SERVICIO } from './application/ports/ingreso-service.interface'
 import { ENFERMERA_REPOSITORIO } from './application/ports/enfermera-repository.interface';
 import { ENFERMERA_SERVICE } from './application/ports/enfermera-service.interface';
 import { EnfermeraService } from './application/services/enfermera.service';
-import { EnfermeraRepositoryMock } from 'test/mocks/enfermera-repository.mock';
 import { IngresoRepositoryPg } from './infrastructure/repositories/ingreso.repository.pg';
 import { PacientesModule } from '../pacientes/pacientes.module';
 import { UrgenciasController } from './infrastructure/urgencias.controller';
+import { EnfermeraRepositoryPg } from './infrastructure/repositories/enfermera.repository.pg';
 
 @Module({
     controllers: [UrgenciasController],
@@ -28,7 +28,7 @@ import { UrgenciasController } from './infrastructure/urgencias.controller';
         },
         {
             provide: ENFERMERA_REPOSITORIO,
-            useClass: EnfermeraRepositoryMock,
+            useClass: EnfermeraRepositoryPg,
         },
     ],
     exports: [INGRESO_SERVICIO, ENFERMERA_SERVICE]

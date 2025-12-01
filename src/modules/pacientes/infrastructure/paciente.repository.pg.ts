@@ -39,7 +39,9 @@ export class PacienteRepositoryPg implements IPacienteRepository {
 
     result.rows.forEach(r => {
       const paciente = this.construirPaciente(r);
+      if (paciente) {
       pacientes.push(paciente);
+      }
     });
 
     return pacientes;
@@ -70,9 +72,14 @@ export class PacienteRepositoryPg implements IPacienteRepository {
     console.log("Paciente registrado Exitosamente");
   }
 
-  private construirPaciente(r: any): Paciente {
+  private construirPaciente(r: any): Paciente | null {
 
-    const result = r.rows ? r.rows[0] : r;
+    console.log(r)
+    if(!r.rows || r.rows.length === 0){
+      return null
+    }
+
+    const result = r.rows[0];
 
     const domicilio: Domicilio = {
       calle: result.calle,
@@ -88,6 +95,6 @@ export class PacienteRepositoryPg implements IPacienteRepository {
 
     console.log("Construyendo paciente:", r);
 
-    return new Paciente(result.cuil, result.apellido, result.nombre, domicilio, afiliado);
+    return new Paciente(result.cuil, result.apellido, result.nombre, domicilio, afiliado, result.id);
   }
 }

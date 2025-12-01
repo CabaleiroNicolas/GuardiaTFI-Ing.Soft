@@ -3,14 +3,15 @@ import { Domicilio } from "../value-objects/domicilio.vo";
 
 export class Paciente {
 
-  private id: number;
+  private id?: number;
   private cuil: string;
   private apellido: string;
   private nombre: string;
   private domicilio: Domicilio;
   private obraSocial: Afiliado | null;
 
-  constructor(cuil: string, apellido: string, nombre: string, domicilio: Domicilio, obraSocial: Afiliado | null) {
+  constructor(cuil: string, apellido: string, nombre: string, domicilio: Domicilio, obraSocial: Afiliado | null, id?: number) {
+    this.id = id;
     this.cuil = cuil;
     this.apellido = apellido;
     this.nombre = nombre;
@@ -22,7 +23,7 @@ export class Paciente {
     return this.cuil;
   }
 
-  getId(): number {
+  getId(): number | undefined {
     return this.id;
   }
 
@@ -38,7 +39,9 @@ export class Paciente {
     return this.domicilio;
   }
 
-   getObraSocial(): Afiliado | null {
+  getObraSocial(): Afiliado | null {
     return this.obraSocial;
   }
+
+
 }

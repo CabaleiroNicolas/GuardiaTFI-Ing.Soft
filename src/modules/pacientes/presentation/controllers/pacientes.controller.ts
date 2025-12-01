@@ -20,18 +20,7 @@ export class PacientesController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ENFERMERA)
   async registrarPaciente(@Body() newPaciente : PacienteDto, @Res() res) {
-
-    console.log("cuil " + newPaciente.cuil);
-    console.log("apellido " + newPaciente.apellido);
-    console.log("nombre " + newPaciente.nombre);
-    console.log("calle " + newPaciente.calle);
-    console.log("numero " + newPaciente.numero);
-    console.log("localidad " + newPaciente.localidad);
-    console.log("obraSocial " + newPaciente.obraSocial);
-    console.log("numeroAfiliado " + newPaciente.numeroAfiliado);
-
     await this.pacienteService.registrar(newPaciente);
     res.status(201).send({ message: 'Paciente registrado con éxito' });
-   
   }
 }

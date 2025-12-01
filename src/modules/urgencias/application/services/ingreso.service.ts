@@ -33,13 +33,13 @@ export class IngresoService implements IIngresoService {
 
   async registrar(ingreso: RegistrarIngresoDto, enfermeraId: number): Promise<string> {
 
-    const enfermeraMock: Enfermera = new Enfermera(1,"","",UserRole.ENFERMERA, "20-44444444-1", "Stoessel", "Martina", "34");
+    const enfermera: Enfermera = await this.enfermeraService.buscarPorId(enfermeraId);
 
     const paciente: Paciente = await this.validarPacienete(ingreso.cuil);
 
     const nuevoIngreso: Ingreso = new Ingreso(
       paciente,
-      enfermeraMock,
+      enfermera,
       new Date(Date.now()),
       ingreso.informe,
       NivelEmergenciaHelper.nivelEmergenciaFromString(ingreso.nivelEmergencia),
@@ -78,6 +78,7 @@ export class IngresoService implements IIngresoService {
   }
 
   async validarPacienete(cuil: string): Promise<Paciente> {
+    console.log("Validando paciente con cuil:", cuil);
     const paciente = await this.pacienteService.buscar(cuil);
     if (!paciente) {
       throw new Error("No se encontró el paciente");

@@ -5,5 +5,6 @@ export const ENFERMERA_SERVICE = Symbol('ENFERMERA_SERVICE');
 export interface IEnfermeraService {
 
     registrar(enfermera: Enfermera): void;
+    buscarPorId(enfermeraId: number): Promise<Enfermera>;
 
 }

@@ -13,12 +13,22 @@ export class NivelEmergenciaHelper {
     switch (nivelEmergenciaStr) {
       case 'Critico':
         return NivelEmergencia.CRITICO;
+      case 'CRITICA':
+        return NivelEmergencia.CRITICO;
       case 'Emergencia':
+        return NivelEmergencia.EMERGENCIA;
+      case 'EMERGENCIA':
         return NivelEmergencia.EMERGENCIA;
       case 'Urgencia':
         return NivelEmergencia.URGENCIA;
+      case 'URGENCIA':
+        return NivelEmergencia.URGENCIA;
       case 'Urgencia Menor':
         return NivelEmergencia.URGENCIA_MENOR;
+      case 'URGENCIA_MENOR':
+        return NivelEmergencia.URGENCIA_MENOR;
+      case 'SIN_URGENCIA':
+        return NivelEmergencia.SIN_URGENCIA;
       case 'Sin Urgencia':
         return NivelEmergencia.SIN_URGENCIA;
       default:

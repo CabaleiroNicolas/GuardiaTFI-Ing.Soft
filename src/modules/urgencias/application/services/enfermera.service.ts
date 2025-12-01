@@ -11,6 +11,16 @@ export class EnfermeraService implements IEnfermeraService {
         private readonly enfermeraRepository: IEnfermeraRepository,
     ) {}
 
+    
+    async buscarPorId(enfermeraId: number): Promise<Enfermera> {
+        console.log("Buscando enfermera por ID en servicio:", enfermeraId);
+        const enfermera: Enfermera | null = await this.enfermeraRepository.buscarPorId(enfermeraId);
+        if(!enfermera){
+            throw new Error('Enfermera no encontrada.');
+        }
+        return enfermera;
+    }
+
 
     async registrar(enfermera: Enfermera): Promise<void> {
         const enfermeras: Enfermera[] = await this.enfermeraRepository.obtenerTodos();

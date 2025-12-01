@@ -31,4 +31,5 @@ export class Enfermera extends User{
   getMatricula(): string {
     return this.matricula;
   }
+
 }

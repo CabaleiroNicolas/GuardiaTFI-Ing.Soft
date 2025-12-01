@@ -56,8 +56,8 @@ export class IngresoRepositoryPg implements IIngresoRepository {
     console.log(ingreso);
 
     await this.pool.query(query, [
-      1,//ingreso.getPaciente().getId(),
-      1,//ingreso.getEnfermera().userId,
+      ingreso.getPaciente().getId(),
+      ingreso.getEnfermera().userId,
       ingreso.getInforme(),
       ingreso.getNivelEmergencia(),
       signosVitales.temperatura,

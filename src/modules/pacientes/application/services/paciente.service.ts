@@ -22,6 +22,7 @@ export class PacienteService implements IPacienteService {
 
   async buscar(cuil: string): Promise<Paciente | null> {
     const paciente = await this.pacienteRepo.obtener(cuil);
+    if (!paciente) throw new Error("Paciente no encontrado");
     console.log("Paciente encontrado:", paciente);
     return paciente;
   }
