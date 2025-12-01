@@ -29,6 +29,16 @@ CREATE TABLE IF NOT EXISTS pacientes (
 );
 
 -- ==========================================================
+-- TABLA AFILIADOS
+-- ==========================================================
+CREATE TABLE IF NOT EXISTS afiliados (
+    id SERIAL PRIMARY KEY,
+    cuil VARCHAR(20) NOT NULL,
+    obra_social_id INTEGER NOT NULL REFERENCES obras_sociales(id) ON DELETE CASCADE,
+    numero_afiliado VARCHAR(10) NOT NULL
+);
+
+-- ==========================================================
 -- TABLA ENFERMERAS
 -- ==========================================================
 CREATE TABLE IF NOT EXISTS enfermeras (
@@ -36,7 +46,10 @@ CREATE TABLE IF NOT EXISTS enfermeras (
     matricula VARCHAR(20) UNIQUE NOT NULL,
     cuil VARCHAR(20) UNIQUE NOT NULL,
     nombre VARCHAR(50) NOT NULL,
-    apellido VARCHAR(50) NOT NULL
+    apellido VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    rol VARCHAR(20) NOT NULL DEFAULT 'ENFERMERA' CHECK (rol = 'ENFERMERA')
 );
 
 -- ==========================================================
@@ -77,14 +90,17 @@ CREATE INDEX IF NOT EXISTS idx_ingresos_fecha ON ingresos (fecha_ingreso);
 -- 1. Obras Sociales
 INSERT INTO obras_sociales (nombre)
 VALUES
-('Subsidio'),
-('Particular')
-ON CONFLICT (nombre) DO NOTHING; -- Conflict por el campo UNIQUE(nombre)
+    ('OSDE'),
+    ('Swiss Medical'),
+    ('PAMI'),
+    ('Galeno'),
+    ('Medicus')
+ON CONFLICT (nombre) DO NOTHING;
 
 -- 2. Enfermeras
-INSERT INTO enfermeras (cuil, matricula, nombre, apellido)
+INSERT INTO enfermeras (cuil, matricula, nombre, apellido, email, password_hash)
 VALUES
-('20-44444444-1', '34', 'Martina', 'Stoessel')
+('20-44444444-1', '34', 'Martina', 'Stoessel', 'martina.stoessel@example.com', '$2b$10$CUkC0yKCgfyQpW4duoO4xumgblmXpi3nPMt6HhR9j0GfSKvSgjK12') -- Contraseña: Tini123
 ON CONFLICT (cuil) DO NOTHING; -- Conflict por el campo UNIQUE(cuil)
 
 -- 3. Pacientes
@@ -95,3 +111,13 @@ VALUES
 ('20-87654321-1', 'María', 'López', 'Monteagudo', '650', 'San Miguel de Tucumán', null, (SELECT id FROM obras_sociales WHERE nombre = 'Subsidio')),
 ('20-22222222-1', 'Carlos', 'Ruiz', '25 de Mayo', '320', 'San Miguel de Tucumán', null, NULL) -- NULL para paciente sin obra social
 ON CONFLICT (cuil) DO NOTHING; -- Conflict por el campo UNIQUE(cuil)
+
+-- 4. Afiliados
+INSERT INTO afiliados (cuil, obra_social_id, numero_afiliado)
+VALUES
+    ('20-11111111-1', (SELECT id FROM obras_sociales WHERE nombre = 'OSDE'), '1001'),
+    ('20-22222222-2', (SELECT id FROM obras_sociales WHERE nombre = 'Swiss Medical'), '2001'),
+    ('20-33333333-3', (SELECT id FROM obras_sociales WHERE nombre = 'PAMI'), '3001'),
+    ('20-44444444-4', (SELECT id FROM obras_sociales WHERE nombre = 'Galeno'), '4001'),
+    ('20-55555555-5', (SELECT id FROM obras_sociales WHERE nombre = 'Medicus'), '5001')
+ON CONFLICT DO NOTHING;
