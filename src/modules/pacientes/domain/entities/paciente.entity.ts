@@ -3,6 +3,7 @@ import { Domicilio } from "../value-objects/domicilio.vo";
 
 export class Paciente {
 
+  private id: number;
   private cuil: string;
   private apellido: string;
   private nombre: string;
@@ -19,6 +20,10 @@ export class Paciente {
 
   getCuil(): string {
     return this.cuil;
+  }
+
+  getId(): number {
+    return this.id;
   }
 
   getApellido(): string {

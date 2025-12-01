@@ -21,7 +21,9 @@ export class PacienteService implements IPacienteService {
   ) { }
 
   async buscar(cuil: string): Promise<Paciente | null> {
-    return await this.pacienteRepo.obtener(cuil);
+    const paciente = await this.pacienteRepo.obtener(cuil);
+    console.log("Paciente encontrado:", paciente);
+    return paciente;
   }
 
   async comprobarCampos(paciente: Paciente): Promise<void> {

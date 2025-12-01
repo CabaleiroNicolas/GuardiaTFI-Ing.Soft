@@ -5,6 +5,6 @@ import { RegistrarIngresoDto } from "../../domain/value-objects/registrar-ingres
 export const INGRESO_SERVICIO = Symbol('INGRESO_SERVICIO');
 
 export interface IIngresoService {
-  registrar(ingreso: RegistrarIngresoDto, enfermera: Enfermera): Promise<string>;
+  registrar(ingreso: RegistrarIngresoDto, enfermeraId: number): Promise<string>;
   obtenerIngresosEnEspera(): Promise<Ingreso[]>;
 }

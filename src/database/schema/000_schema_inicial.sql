@@ -51,8 +51,8 @@ CREATE TABLE IF NOT EXISTS ingresos (
     fecha_ingreso TIMESTAMP NOT NULL DEFAULT NOW(),
     informe TEXT NOT NULL,
 
-    -- Nivel de emergencia (0: Crítico, 4: Sin Urgencia)
-    nivel_emergencia INTEGER NOT NULL CHECK (nivel_emergencia BETWEEN 0 AND 4),
+    -- Nivel de emergencia
+    nivel_emergencia VARCHAR(20) NOT NULL CHECK (nivel_emergencia IN ('Critico', 'Emergencia', 'Urgencia', 'Urgencia Menor', 'Sin Urgencia')),
 
     -- Signos vitales
     temperatura NUMERIC(4,1) NOT NULL,

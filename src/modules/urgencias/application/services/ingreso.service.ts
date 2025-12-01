@@ -2,39 +2,46 @@ import { Inject, Injectable } from "@nestjs/common";
 import { Ingreso } from "../../domain/entities/ingreso.entity";
 import { IIngresoService } from "../ports/ingreso-service.interface";
 import { IIngresoRepository, INGRESO_REPOSITORIO } from "../ports/ingreso-repository.interface";
-import { NivelEmergencia } from "../../domain/value-objects/nivel-emergencia.enum";
+import { NivelEmergencia, NivelEmergenciaHelper } from "../../domain/value-objects/nivel-emergencia.enum";
 import { EstadoIngreso } from "../../domain/value-objects/estado-ingreso.enum";
 import { RegistrarIngresoDto } from "../../domain/value-objects/registrar-ingreso.dto";
 import { IPacienteService, PACIENTE_SERVICIO } from "src/modules/pacientes/application/ports/paciente-service.interface";
 import { Paciente } from "src/modules/pacientes/domain/entities/paciente.entity";
 import { Enfermera } from "../../domain/entities/enfermera.entity";
+import { ENFERMERA_SERVICE, IEnfermeraService } from "../ports/enfermera-service.interface";
 
 @Injectable()
 export class IngresoService implements IIngresoService {
 
   private readonly ordenNivelesEmergencia: NivelEmergencia[];
+  private readonly NivelEmergenciaHelper = new NivelEmergenciaHelper();
 
   constructor(
     @Inject(INGRESO_REPOSITORIO)
     private readonly ingresoRepo: IIngresoRepository,
 
     @Inject(PACIENTE_SERVICIO)
-    private readonly pacienteService: IPacienteService
+    private readonly pacienteService: IPacienteService,
+
+    @Inject(ENFERMERA_SERVICE)
+    private readonly enfermeraService: IEnfermeraService,
   ) {
     this.ordenNivelesEmergencia = [NivelEmergencia.CRITICO, NivelEmergencia.EMERGENCIA, NivelEmergencia.URGENCIA, NivelEmergencia.URGENCIA_MENOR, NivelEmergencia.SIN_URGENCIA];
   }
 
 
-  async registrar(ingreso: RegistrarIngresoDto, enfermera: Enfermera): Promise<string> {
+  async registrar(ingreso: RegistrarIngresoDto, enfermeraId: number): Promise<string> {
+
+    const enfermeraMock: Enfermera = new Enfermera("20-44444444-1", "Stoessel", "Martina", "34");
 
     const paciente: Paciente = await this.validarPacienete(ingreso.cuil);
 
     const nuevoIngreso: Ingreso = new Ingreso(
       paciente,
-      enfermera,
+      enfermeraMock,
       new Date(Date.now()),
       ingreso.informe,
-      NivelEmergencia[ingreso.nivelEmergencia],
+      NivelEmergenciaHelper.nivelEmergenciaFromString(ingreso.nivelEmergencia),
       {
         temperatura: ingreso.temperatura,
         frecCardiaca: ingreso.frecCardiaca,

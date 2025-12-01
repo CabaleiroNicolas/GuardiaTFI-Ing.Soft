@@ -29,9 +29,9 @@ import { PacientesModule } from '../pacientes/pacientes.module';
         },
         {
             provide: ENFERMERA_REPOSITORIO,
-            useClass: EnfermeraRepositoryMock, // Cambiar por EnfermeraRepositoryImpl cuando se implemente la real
+            useClass: EnfermeraRepositoryMock,
         },
     ],
-    exports: [INGRESO_SERVICIO, PACIENTE_SERVICIO, ENFERMERA_SERVICE]
+    exports: [INGRESO_SERVICIO, ENFERMERA_SERVICE]
 })
 export class UrgenciasModule { }

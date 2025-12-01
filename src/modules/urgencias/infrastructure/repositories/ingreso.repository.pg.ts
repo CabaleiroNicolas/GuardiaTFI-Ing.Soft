@@ -47,14 +47,16 @@ export class IngresoRepositoryPg implements IIngresoRepository {
   }
 
   async registrar(ingreso: Ingreso): Promise<void> {
-    const query = `INSERT INTO ingresos ( paciente_cuil, enfermera_matricula, informe, nivel_emergencia, temperatura, frecuencia_cardiaca, frecuencia_respiratoria, tension_arterial, estado) 
+    const query = `INSERT INTO ingresos ( paciente_id, enfermera_id, informe, nivel_emergencia, temperatura, frecuencia_cardiaca, frecuencia_respiratoria, tension_arterial, estado) 
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`;
 
     const signosVitales = ingreso.getSignosVitales();
 
+    console.log(ingreso);
+
     await this.pool.query(query, [
-      ingreso.getPaciente().getCuil(),
-      ingreso.getEnfermera().getMatricula(),
+      1,//ingreso.getPaciente().getId(),
+      1,//ingreso.getEnfermera().userId,
       ingreso.getInforme(),
       ingreso.getNivelEmergencia(),
       signosVitales.temperatura,

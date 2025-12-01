@@ -20,11 +20,9 @@ export class PacienteRepositoryPg implements IPacienteRepository {
   async obtener(cuil: string): Promise<Paciente | null> {
     const result = await this.pool.query(`SELECT p.id, p.cuil, p.nombre, p.apellido, 
       p.calle, p.numero_direccion, p.localidad, 
-      p.numero_afiliado, p.obra_social_id, os.nombre AS obra_social 
+      p.numero_afiliado, p.obra_social_id 
       FROM pacientes p 
-      INNER JOIN obras_sociales os 
-      ON p.obra_social_id = os.id 
-      WHERE p.cuil = ${cuil}`);
+      WHERE p.cuil = $1`, [cuil]);
     
     return this.construirPaciente(result);
   }
@@ -73,17 +71,23 @@ export class PacienteRepositoryPg implements IPacienteRepository {
   }
 
   private construirPaciente(r: any): Paciente {
+
+    const result = r.rows ? r.rows[0] : r;
+
     const domicilio: Domicilio = {
-      calle: r.calle,
-      numero: r.numero_direccion,
-      localidad: r.localidad
+      calle: result.calle,
+      numero: result.numero_direccion,
+      localidad: result.localidad
     };
-    const obraSocial = new ObraSocial(r.obra_social_id, r.obra_social);
+   // const obraSocial = new ObraSocial(r.obra_social_id, r.obra_social);
     const afiliado: Afiliado = {
       numeroAfiliado: r.numero_afiliado,
-      obraSocial
+      //obraSocial,
+      obraSocial:new ObraSocial("1", "")
     };
 
-    return new Paciente(r.cuil, r.apellido, r.nombre, domicilio, afiliado);
+    console.log("Construyendo paciente:", r);
+
+    return new Paciente(result.cuil, result.apellido, result.nombre, domicilio, afiliado);
   }
 }
