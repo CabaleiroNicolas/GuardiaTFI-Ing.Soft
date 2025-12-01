@@ -13,7 +13,7 @@ export class UserRepository implements IUserRepository {
         private readonly pool: Pool
     ) { }
 
-    
+
     save(user: User): Promise<void> {
         throw new Error("Method not implemented.");
     }
@@ -28,8 +28,8 @@ export class UserRepository implements IUserRepository {
 
         let result: any | null = null;
 
-        const queryEnfermera = `SELECT cuil, email, password, role FROM enfermeras WHERE email = $1 LIMIT 1`;
-        const queryMedico = `SELECT cuil, email, password, role FROM medicos WHERE email = $1 LIMIT 1`;
+        const queryEnfermera = `SELECT cuil, email, password_hash, role, matricula, apellido, nombre FROM enfermeras WHERE email = $1 LIMIT 1`;
+        const queryMedico = `SELECT cuil, email, password_hash, role FROM medicos WHERE email = $1 LIMIT 1`;
 
         result = await this.pool.query(queryEnfermera, [email]).rows[0];
 
