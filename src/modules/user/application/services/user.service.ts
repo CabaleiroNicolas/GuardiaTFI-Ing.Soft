@@ -27,8 +27,6 @@ export class UserService implements IUserService {
       throw new BadRequestException('Password is required');
     }
 
-    const newUserId: number = (await this.getLastUserId()) + 1;
-    newUser.userId = newUserId;
     await this.userRepo.save(newUser);
   }
 
@@ -52,7 +50,4 @@ export class UserService implements IUserService {
 
   }
 
-  private async getLastUserId(): Promise<number> {
-    return await Promise.resolve(this.userRepo.findLastUserId());
-  }
 }

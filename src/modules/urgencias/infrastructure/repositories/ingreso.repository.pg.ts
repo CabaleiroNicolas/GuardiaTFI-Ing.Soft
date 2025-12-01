@@ -9,6 +9,7 @@ import { Afiliado } from "src/modules/pacientes/domain/value-objects/afiliado.vo
 import { ObraSocial } from "src/modules/pacientes/domain/entities/obra-social.entity";
 import { Enfermera } from "../../domain/entities/enfermera.entity";
 import { SignosVitales, TensionArterial } from "../../domain/value-objects/signos-vitales.vo";
+import { UserRole } from "src/modules/user/domain/value-objects/user-role.enum";
 
 @Injectable()
 export class IngresoRepositoryPg implements IIngresoRepository {
@@ -34,7 +35,7 @@ export class IngresoRepositoryPg implements IIngresoRepository {
         FROM ingresos i 
         INNER JOIN pacientes p ON p.id = i.paciente_id 
         INNER JOIN enfermeras e ON e.id = i.enfermera_id 
-        ORDER BY i.nivel_emergencia ASC, i.fecha_ingreso DESC`);
+        ORDER BY i.fecha_ingreso DESC`);
 
     let ingresos: Ingreso[] = [];
     
@@ -92,7 +93,8 @@ export class IngresoRepositoryPg implements IIngresoRepository {
 
     const paciente = new Paciente(r.paciente_cuil, r.paciente_apellido,
       r.paciente_nombre, domicilio, afiliado);
-    const enfermera = new Enfermera(r.enfermera_cuil, r.enfermera_apellido,
+
+    const enfermera = new Enfermera(r.userId, "null", "null", UserRole.ENFERMERA, r.enfermera_cuil, r.enfermera_apellido,
       r.enfermera_nombre, r.enfermera_matricula);
       
     return new Ingreso(paciente, enfermera, fechaIngreso, r.informe, r.nivel_emergencia, signosVitales);
