@@ -1,15 +1,18 @@
+import { Inject, Injectable } from "@nestjs/common";
 import { ObraSocial } from "../../domain/entities/obra-social.entity";
-import { IObraSocialRepository } from "../ports/obra-social-repository.interface";
+import { IObraSocialRepository, OBRASOCIAL_REPOSITORIO } from "../ports/obra-social-repository.interface";
 import { IObraSocialService } from "../ports/obra-social-service.interface";
 
+@Injectable()
 export class ObraSocialService implements IObraSocialService {
 
   constructor(
+    @Inject(OBRASOCIAL_REPOSITORIO)
     private readonly obraSocialRepo: IObraSocialRepository
   ) { }
   
-  async buscar(id: string): Promise<ObraSocial | null> {
-    return this.obraSocialRepo.obtener(id);
+  async buscar(nombre: string): Promise<ObraSocial | null> {
+    return this.obraSocialRepo.obtener(nombre);
   }
 
   async modificar(obraSocial: ObraSocial): Promise<void> {
