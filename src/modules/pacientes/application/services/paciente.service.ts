@@ -28,7 +28,7 @@ export class PacienteService implements IPacienteService {
 
     if (!paciente) {
       this.logger.error("Paciente no encontrado con cuil:", cuil);
-      throw new Error("Paciente no encontrado");
+      throw new Error("No se encontró el Paciente");
     }
     return paciente;
   }
