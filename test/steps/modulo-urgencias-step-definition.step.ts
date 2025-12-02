@@ -1,5 +1,5 @@
 import { Given, When, Then, Before } from '@cucumber/cucumber';
-import { expect } from 'chai';
+import { expect } from 'chai'; 
 import { Enfermera } from 'src/modules/urgencias/domain/entities/enfermera.entity';
 import { Ingreso } from 'src/modules/urgencias/domain/entities/ingreso.entity';
 import { Domicilio } from 'src/modules/pacientes/domain/value-objects/domicilio.vo';
@@ -7,6 +7,9 @@ import { NivelEmergencia, NivelEmergenciaHelper } from 'src/modules/urgencias/do
 import { SignosVitales } from 'src/modules/urgencias/domain/value-objects/signos-vitales.vo';
 import { CustomWorld } from 'test/support/world';
 import { Paciente } from 'src/modules/pacientes/domain/entities/paciente.entity';
+import { PacienteDto } from 'src/modules/pacientes/domain/value-objects/paciente.dto';
+import { UserRole } from 'src/modules/user/domain/value-objects/user-role.enum';
+import { RegistrarIngresoDto } from 'src/modules/urgencias/domain/value-objects/registrar-ingreso.dto';
 
 Before((scenario) => {
   console.log(`\n\nSCENARIO: ${scenario.pickle.name}`);
@@ -18,13 +21,18 @@ Given('los pacientes registrados con los siguientes datos:', function (this: Cus
   const pacientes = dataTable.hashes();
 
   for (const p of pacientes) {
-    const domicilio: Domicilio = {
+    const pacienteDto: PacienteDto = {
+      cuil: p.cuil,
+      apellido: p.apellido,
+      nombre: p.nombre,
       calle: p.calle,
       numero: p.numero,
-      localidad: p.localidad
+      localidad: p.localidad,
+      obraSocial: "",
+      numeroAfiliado: ""
     };
-    const paciente = new Paciente(p.cuil, p.apellido, p.nombre, domicilio, null);
-    this.pacienteServicio.registrar(paciente);
+
+    this.pacienteServicio.registrar(pacienteDto);
   }
 });
 
@@ -32,8 +40,9 @@ Given('existe una enfermera registrada con los siguientes datos:', function (thi
   const enfermeras = dataTable.hashes();
 
   for (const e of enfermeras) {
-    const enfermera = new Enfermera(e.cuil, e.apellido, e.nombre, e.matricula);
+    const enfermera = new Enfermera(1, "martina.stoessel@example.com","test", UserRole.ENFERMERA, e.cuil, e.apellido, e.nombre, e.matricula);
     this.enfermeraMock = enfermera;
+    this.enfermeraServicio.registrar(enfermera);
   }
 });
 
@@ -49,12 +58,20 @@ Given('el sistema tiene la siguiente cola de pacientes en espera:', async functi
   for (const i of ingresos) {
     const paciente = await this.pacienteServicio.buscar(i.cuil);
     const nivelEmergencia: NivelEmergencia = NivelEmergenciaHelper.nivelEmergenciaFromString(i.nivelEmergencia);
-    const hora = i.horaIngreso.split(":")[0] as number;
-    const minutos = i.horaIngreso.split(":")[1] as number;
-    const fecha = new Date(2025, 10, 13, hora, minutos);
-    const ingreso = new Ingreso(paciente!, this.enfermeraMock!, fecha, this.informeMock, nivelEmergencia, this.signosVitalesMock);
 
-    this.ingresoServicio.registrar(ingreso);
+    const tensionArterial = this.signosVitalesMock.tensionArterial.frecSistolica + "/" + this.signosVitalesMock.tensionArterial.frecDiastolica;
+
+    const registrarIngresoDto: RegistrarIngresoDto = {
+      cuil: paciente!.getCuil(),
+      nivelEmergencia,
+      frecCardiaca: this.signosVitalesMock.frecCardiaca,
+      frecRespiratoria: this.signosVitalesMock.frecRespiratoria,
+      temperatura: this.signosVitalesMock.temperatura,
+      tensionArterial,
+      informe: this.informeMock
+    }
+
+    this.ingresoServicio.registrar(registrarIngresoDto, this.enfermeraMock.userId);
   }
 });
 
@@ -75,12 +92,19 @@ Then('se registra el ingreso del paciente a la cola con estado: Pendiente y hora
     }
   };
 
-  const hora = horaActual.split(":")[0] as number;
-  const minutos = horaActual.split(":")[1] as number;
-  const fecha = new Date(2025, 10, 13, hora, minutos);
-  const ingreso = new Ingreso(this.paciente!, this.enfermeraMock!, fecha, this.datosIngreso.informe, this.nivelEmergencia, signosVitales);
+  const tensionArterial = this.signosVitalesMock.tensionArterial.frecSistolica + "/" + this.signosVitalesMock.tensionArterial.frecDiastolica;
 
-  this.ingresoServicio.registrar(ingreso);
+  const registrarIngresoDto: RegistrarIngresoDto = {
+    cuil: this.paciente!.getCuil(),
+    nivelEmergencia: this.nivelEmergencia,
+    frecCardiaca: signosVitales.frecCardiaca,
+    frecRespiratoria: signosVitales.frecRespiratoria,
+    temperatura: signosVitales.temperatura,
+    tensionArterial,
+    informe: this.datosIngreso.informe
+  }
+
+  this.ingresoServicio.registrar(registrarIngresoDto, this.enfermeraMock.userId);
 });
 
 Then('la cola de espera de pacientes es:', async function (this: CustomWorld, dataTable) {
@@ -110,8 +134,21 @@ Then('se registra el nuevo paciente', async function (this: CustomWorld) {
   const apellido = this.datosIngreso.apellido;
   const cuil = this.datosIngreso.cuil;
 
-  this.paciente = new Paciente(cuil, apellido, nombre, this.domicilioMock, null);
-  await this.pacienteServicio.registrar(this.paciente);
+  const pacienteDto: PacienteDto = {
+    cuil,
+    apellido,
+    nombre,
+    calle: this.domicilioMock.calle,
+    numero: this.domicilioMock.numero,
+    localidad: this.domicilioMock.localidad,
+    obraSocial: "",
+    numeroAfiliado: ""
+  };
+
+  this.pacienteServicio.registrar(pacienteDto);
+
+  // this.paciente = new Paciente(cuil, apellido, nombre, this.domicilioMock, null);
+  // await this.pacienteServicio.registrar(this.paciente);
 
   this.paciente = await this.pacienteServicio.buscar(cuil);
   expect(this.paciente).to.not.be.null;
@@ -133,12 +170,31 @@ Then('debo ver un mensaje de error {string}', async function (this: CustomWorld,
       frecDiastolica: this.datosIngreso.tensionArterial.split("/")[1] as number
     }
   };
-  const fecha = new Date(2025, 10, 13, 8, 20);
+
   this.nivelEmergencia = NivelEmergenciaHelper.nivelEmergenciaFromString(this.datosIngreso.nivelEmergencia);
 
-  const ingreso = new Ingreso(this.paciente!, this.enfermeraMock!, fecha, this.informeMock, this.nivelEmergencia, signosVitales);
+  const tensionArterial = signosVitales.tensionArterial.frecSistolica + "/" + signosVitales.tensionArterial.frecDiastolica;
 
-  const mensaje = await this.ingresoServicio.registrar(ingreso);
+  const registrarIngresoDto: RegistrarIngresoDto = {
+    cuil: this.paciente!.getCuil(),
+    nivelEmergencia: this.nivelEmergencia,
+    frecCardiaca: signosVitales.frecCardiaca,
+    frecRespiratoria: signosVitales.frecRespiratoria,
+    temperatura: signosVitales.temperatura,
+    tensionArterial,
+    informe: this.datosIngreso.informe
+  }
 
-  expect(mensaje).to.be.equal(mensajeErrorEsperado);
+  console.log("temperatura " + registrarIngresoDto.temperatura);
+  console.log("frecCardiaca " + registrarIngresoDto.frecCardiaca);
+  console.log("frecRespiratoria " + registrarIngresoDto.frecRespiratoria);
+  console.log("frecSistolica " + signosVitales.tensionArterial.frecSistolica);
+  console.log("frecDiastolica " + signosVitales.tensionArterial.frecDiastolica);
+
+  try {
+    await this.ingresoServicio.registrar(registrarIngresoDto, this.enfermeraMock.userId);
+    expect.fail("La función no lanzó ningún error");
+  } catch (error: any) {
+    expect(error.message).to.equal(mensajeErrorEsperado);
+  }
 });
