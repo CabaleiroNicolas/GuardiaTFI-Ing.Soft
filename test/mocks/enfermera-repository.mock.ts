@@ -2,9 +2,13 @@ import { IEnfermeraRepository } from "src/modules/urgencias/application/ports/en
 import { Enfermera } from "src/modules/urgencias/domain/entities/enfermera.entity";
 
 export class EnfermeraRepositoryMock  implements IEnfermeraRepository {
-
+  
     private enfermeras: Enfermera[] = [];
-    
+  
+    buscarPorId(enfermeraId: number): Promise<Enfermera | null> {
+      return Promise.resolve(this.enfermeras.find(e => e.userId == enfermeraId)!);
+    }
+
     guardar(enfermera: Enfermera): Promise<void> {
         this.enfermeras.push(enfermera);
         return Promise.resolve();

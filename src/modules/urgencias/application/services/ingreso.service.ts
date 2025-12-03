@@ -30,8 +30,30 @@ export class IngresoService implements IIngresoService {
     this.ordenNivelesEmergencia = [NivelEmergencia.CRITICO, NivelEmergencia.EMERGENCIA, NivelEmergencia.URGENCIA, NivelEmergencia.URGENCIA_MENOR, NivelEmergencia.SIN_URGENCIA];
   }
 
+  // Para validar paso Then
+  private comprobarCampos(ingreso: RegistrarIngresoDto) {
+
+    if (!ingreso.temperatura || !ingreso.frecCardiaca || !ingreso.frecRespiratoria)
+      throw new Error("Hay campos sin completar");
+
+    if (ingreso.temperatura < 0)
+      throw new Error("El valor de la temperatura no puede ser negativo");
+
+    if (ingreso.frecCardiaca < 0)
+      throw new Error("El valor de la frecuencia cardíaca no puede ser negativo");
+
+    if (ingreso.frecRespiratoria < 0)
+      throw new Error("El valor de la frecuencia respiratoria no puede ser negativo");
+  }
+
 
   async registrar(ingreso: RegistrarIngresoDto, enfermeraId: number): Promise<void> {
+
+    try {
+      this.comprobarCampos(ingreso);
+    } catch (error) {
+      throw new Error("ERROR: " + error.message);
+    }
 
     const enfermera: Enfermera = await this.enfermeraService.buscarPorId(enfermeraId);
 
