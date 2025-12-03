@@ -4,7 +4,7 @@ export const OBRASOCIAL_REPOSITORIO = Symbol('OBRASOCIAL_REPOSITORIO');
 
 export interface IObraSocialRepository {
   modificar(obraSocial: ObraSocial): Promise<void>;
-  obtener(id: string): Promise<ObraSocial | null>;
+  obtener(nombre: string): Promise<ObraSocial | null>;
   obtenerTodos(): Promise<ObraSocial[]>;
   registrar(obraSocial: ObraSocial): Promise<void>;
 }

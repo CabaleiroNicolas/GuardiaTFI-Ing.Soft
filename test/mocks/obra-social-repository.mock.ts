@@ -9,8 +9,8 @@ export class ObraSocialRepositoryMock implements IObraSocialRepository {
     throw new Error("No implementado");
   }
 
-  async obtener(id: string): Promise<ObraSocial | null> {
-    const obraSocial: ObraSocial | undefined = this.obrasSocialesRegistradas.find(os => os.getId() == id);
+  async obtener(nombre: string): Promise<ObraSocial | null> {
+    const obraSocial: ObraSocial | undefined = this.obrasSocialesRegistradas.find(os => os.getNombre() === nombre);
 
     if (!obraSocial) return null;
     

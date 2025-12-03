@@ -124,7 +124,10 @@ describe('AuthService', () => {
         email: 'nico@test.com',
         role: UserRole.MEDICO
       });
-      expect(result).toEqual({ access_token: expectedToken });
+      expect(result).toEqual({ 
+        access_token: expectedToken,
+        rol: user.role
+      });
     });
   });
 });
