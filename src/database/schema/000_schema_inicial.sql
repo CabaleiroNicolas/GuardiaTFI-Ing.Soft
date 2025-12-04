@@ -39,20 +39,6 @@ CREATE TABLE IF NOT EXISTS afiliados (
 );
 
 -- ==========================================================
--- TABLA ENFERMERAS
--- ==========================================================
-CREATE TABLE IF NOT EXISTS enfermeras (
-    id SERIAL PRIMARY KEY,
-    matricula VARCHAR(20) UNIQUE NOT NULL,
-    cuil VARCHAR(11) UNIQUE NOT NULL,
-    nombre VARCHAR(50) NOT NULL,
-    apellido VARCHAR(50) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    rol VARCHAR(20) NOT NULL DEFAULT 'ENFERMERA' CHECK (rol = 'ENFERMERA')
-);
-
--- ==========================================================
 -- TABLA INGRESOS
 -- ==========================================================
 CREATE TABLE IF NOT EXISTS ingresos (
@@ -87,7 +73,7 @@ CREATE INDEX IF NOT EXISTS idx_ingresos_fecha ON ingresos (fecha_ingreso);
 -- TABLA MEDICOS
 -- ==========================================================
 
-CREATE TABLE IF NOT EXISTS medicos (
+CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
     matricula VARCHAR(20) UNIQUE NOT NULL,
     cuil VARCHAR(11) UNIQUE NOT NULL,
@@ -95,7 +81,7 @@ CREATE TABLE IF NOT EXISTS medicos (
     apellido VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    rol VARCHAR(20) NOT NULL DEFAULT 'MEDICO' CHECK (rol = 'MEDICO')
+    rol VARCHAR(20) NOT NULL CHECK (rol IN ('MEDICO', 'ENFERMERA'))
 );
 
 -- ==========================================================
@@ -112,10 +98,11 @@ VALUES
     ('Medicus')
 ON CONFLICT (nombre) DO NOTHING;
 
--- 2. Enfermeras
-INSERT INTO enfermeras (cuil, matricula, nombre, apellido, email, password_hash)
+-- 2. Enfermeras y medicos
+INSERT INTO usuarios (cuil, matricula, nombre, apellido, email, password_hash, rol)
 VALUES
-('20444444441', '34', 'Martina', 'Stoessel', 'martina.stoessel@example.com', '$2b$12$JWMFGf/U6A7o9I0RP1GpPuak.dld0uWau1b3VfIjLLdDL1q8igtEi') -- Contraseña: test
+('20444444441', '34', 'Martina', 'Stoessel', 'martina.stoessel@example.com', '$2b$12$JWMFGf/U6A7o9I0RP1GpPuak.dld0uWau1b3VfIjLLdDL1q8igtEi', 'ENFERMERA'), -- Contraseña: test
+('20354612213', '567', 'Miguel', 'Martinez', 'miguel.martinez@example.com', '$2b$12$JWMFGf/U6A7o9I0RP1GpPuak.dld0uWau1b3VfIjLLdDL1q8igtEi', 'MEDICO') -- Contraseña: test
 ON CONFLICT (cuil) DO NOTHING; -- Conflict por el campo UNIQUE(cuil)
 
 -- 3. Pacientes
@@ -136,9 +123,3 @@ VALUES
     ('20444444444', (SELECT id FROM obras_sociales WHERE nombre = 'Galeno'), '4001'),
     ('20555555555', (SELECT id FROM obras_sociales WHERE nombre = 'Medicus'), '5001')
 ON CONFLICT DO NOTHING;
-
--- 5. Médicos
-INSERT INTO medicos (cuil, matricula, nombre, apellido, email, password_hash)
-VALUES
-('20354612213', '567', 'Miguel', 'Martinez', 'miguel.martinez@example.com', '$2b$12$JWMFGf/U6A7o9I0RP1GpPuak.dld0uWau1b3VfIjLLdDL1q8igtEi') -- Contraseña: test
-ON CONFLICT (cuil) DO NOTHING; -- Conflict por el campo UNIQUE(cuil)
