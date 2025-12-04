@@ -84,6 +84,21 @@ CREATE INDEX IF NOT EXISTS idx_ingresos_nivel ON ingresos (nivel_emergencia);
 CREATE INDEX IF NOT EXISTS idx_ingresos_fecha ON ingresos (fecha_ingreso);
 
 -- ==========================================================
+-- TABLA MEDICOS
+-- ==========================================================
+
+CREATE TABLE IF NOT EXISTS medicos (
+    id SERIAL PRIMARY KEY,
+    matricula VARCHAR(20) UNIQUE NOT NULL,
+    cuil VARCHAR(11) UNIQUE NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    rol VARCHAR(20) NOT NULL DEFAULT 'MEDICO' CHECK (rol = 'MEDICO')
+);
+
+-- ==========================================================
 -- DATOS INICIALES (Uso de ON CONFLICT DO NOTHING)
 -- ==========================================================
 
@@ -121,3 +136,9 @@ VALUES
     ('20444444444', (SELECT id FROM obras_sociales WHERE nombre = 'Galeno'), '4001'),
     ('20555555555', (SELECT id FROM obras_sociales WHERE nombre = 'Medicus'), '5001')
 ON CONFLICT DO NOTHING;
+
+-- 5. Médicos
+INSERT INTO medicos (cuil, matricula, nombre, apellido, email, password_hash)
+VALUES
+('20354612213', '567', 'Miguel', 'Martinez', 'miguel.martinez@example.com', '$2b$12$JWMFGf/U6A7o9I0RP1GpPuak.dld0uWau1b3VfIjLLdDL1q8igtEi') -- Contraseña: test
+ON CONFLICT (cuil) DO NOTHING; -- Conflict por el campo UNIQUE(cuil)
