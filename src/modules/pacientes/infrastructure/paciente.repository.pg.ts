@@ -24,7 +24,7 @@ export class PacienteRepositoryPg implements IPacienteRepository {
       p.calle, p.numero_direccion, p.localidad, 
       p.numero_afiliado, p.obra_social_id, os.nombre as nombre_obra
       FROM pacientes p 
-      INNER JOIN obras_sociales os 
+      LEFT JOIN obras_sociales os 
       ON p.obra_social_id = os.id 
       WHERE p.cuil = $1`, [cuil]);
     
