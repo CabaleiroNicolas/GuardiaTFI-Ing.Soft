@@ -37,27 +37,24 @@ export class PacienteService implements IPacienteService {
 
   async registrar(newPaciente: PacienteDto): Promise<void> {
     this.logger.log("Comenzando registro de paciente...");
+    let afiliado: Afiliado | null = null;
 
     this.comprobarCampos(newPaciente);
 
     const pacienteExistente: Paciente | null = await this.pacienteRepo.obtener(newPaciente.cuil);
+
     if (pacienteExistente) {
       this.logger.error("El Paciente ya está registrado");
       throw new Error("El Paciente ya está registrado");
     }
 
     if (newPaciente.numeroAfiliado && newPaciente.obraSocial) {
-      const afiliado: Afiliado = {
-        numeroAfiliado: newPaciente.numeroAfiliado,
-        obraSocial: new ObraSocial("", newPaciente.obraSocial)
-      };
+      
+      const obraSocial = await this.obraSocialServ.buscar(newPaciente.obraSocial);
+      afiliado = await this.afiliadoServ.buscar(newPaciente.numeroAfiliado);
 
-      await this.comprobarAfiliado(afiliado);
+      await this.comprobarAfiliado(afiliado, obraSocial);
     }
-
-    const afiliado = !newPaciente.numeroAfiliado
-      ? await this.afiliadoServ.buscar(newPaciente.numeroAfiliado)
-      : null;
 
     const paciente: Paciente = new Paciente(
       newPaciente.cuil,
@@ -100,19 +97,18 @@ export class PacienteService implements IPacienteService {
     }
   }
 
-  async comprobarAfiliado(afiliado: Afiliado): Promise<void> {
-    const obraSocial = await this.obraSocialServ.buscar(afiliado.obraSocial.getNombre());
-    const afiliadoBuscado = await this.afiliadoServ.buscar(afiliado.numeroAfiliado);
+  // TODO: validar que el afiliado corresponda al cuil ingresado
+  async comprobarAfiliado(afiliado: Afiliado | null, obraSocial: ObraSocial | null): Promise<void> {
 
     if (obraSocial == null) {
       throw new Error("Obra social inexistente");
     }
 
-    if (afiliadoBuscado == null) {
+    if (afiliado == null) {
       throw new Error("Número de afiliado inexistente");
     }
 
-    if (afiliadoBuscado.obraSocial.getId() !== obraSocial.getId()) {
+    if (afiliado.obraSocial.getId() !== obraSocial.getId()) {
       throw new Error("El paciente no está afiliado a la obra social");
     }
   }
