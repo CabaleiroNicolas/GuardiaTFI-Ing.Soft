@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { IPacienteRepository } from "../application/ports/paciente-repository.interface";
 import { Paciente } from "../domain/entities/paciente.entity";
 import { Pool } from "pg";
@@ -6,6 +6,7 @@ import { ObraSocial } from "../domain/entities/obra-social.entity";
 import { Afiliado } from "../domain/value-objects/afiliado.vo";
 import { Domicilio } from "../domain/value-objects/domicilio.vo";
 
+@Injectable()
 export class PacienteRepositoryPg implements IPacienteRepository {
 
   constructor(
@@ -18,13 +19,20 @@ export class PacienteRepositoryPg implements IPacienteRepository {
   }
 
   async obtener(cuil: string): Promise<Paciente | null> {
-    const result = await this.pool.query(`SELECT p.id, p.cuil, p.nombre, p.apellido, 
+    const result = await this.pool.query(`
+      SELECT p.id, p.cuil, p.nombre, p.apellido, 
       p.calle, p.numero_direccion, p.localidad, 
-      p.numero_afiliado, p.obra_social_id 
+      p.numero_afiliado, p.obra_social_id, os.nombre as nombre_obra
       FROM pacientes p 
+      INNER JOIN obras_sociales os 
+      ON p.obra_social_id = os.id 
       WHERE p.cuil = $1`, [cuil]);
     
-    return this.construirPaciente(result);
+    const paciente = this.construirPaciente(result);
+
+    console.log("Result paciente: " + JSON.stringify(paciente))
+    
+    return paciente;
   }
 
   async obtenerTodos(): Promise<Paciente[]> {
@@ -83,11 +91,12 @@ export class PacienteRepositoryPg implements IPacienteRepository {
       numero: result.numero_direccion,
       localidad: result.localidad
     };
-   // const obraSocial = new ObraSocial(r.obra_social_id, r.obra_social);
+
+    const obraSocial = new ObraSocial(r.obra_social_id, r.nombre_obra);
+
     const afiliado: Afiliado = {
       numeroAfiliado: r.numero_afiliado,
-      //obraSocial,
-      obraSocial:new ObraSocial("1", "")
+      obraSocial
     };
 
     return new Paciente(result.cuil, result.apellido, result.nombre, domicilio, afiliado, result.id);

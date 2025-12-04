@@ -8,6 +8,12 @@ import { ObraSocialRepositoryMock } from "test/mocks/obra-social-repository.mock
 import { AFILIADO_REPOSITORIO } from "./application/ports/afiliado-repository.interface";
 import { AfiliadoRepositoryMock } from "test/mocks/afiliado-repository.mock";
 import { PacienteRepositoryPg } from "./infrastructure/paciente.repository.pg";
+import { ObraSocialRepositoryPg } from "./infrastructure/obra-social.repository.pg";
+import { AfiliadoRepositoryPg } from "./infrastructure/afiliado.repository.pg";
+import { OBRASOCIAL_SERVICIO } from "./application/ports/obra-social-service.interface";
+import { ObraSocialService } from "./application/services/obra-social.service";
+import { AFILIADO_SERVICIO } from "./application/ports/afiliado-service.interface";
+import { AfiliadoService } from "./application/services/afiliado.service";
 
 @Module({
   controllers: [PacientesController],
@@ -21,14 +27,22 @@ import { PacienteRepositoryPg } from "./infrastructure/paciente.repository.pg";
       useClass: PacienteRepositoryPg
     },
     {
+      provide: OBRASOCIAL_SERVICIO,
+      useClass: ObraSocialService
+    },
+    {
       provide: OBRASOCIAL_REPOSITORIO,
-      useClass: ObraSocialRepositoryMock
+      useClass: ObraSocialRepositoryPg
+    },
+    {
+      provide: AFILIADO_SERVICIO,
+      useClass: AfiliadoService
     },
     {
       provide: AFILIADO_REPOSITORIO,
-      useClass: AfiliadoRepositoryMock
+      useClass: AfiliadoRepositoryPg
     }
   ],
-  exports: [PACIENTE_SERVICIO]
+  exports: [PACIENTE_SERVICIO, OBRASOCIAL_SERVICIO, AFILIADO_SERVICIO]
 })
 export class PacientesModule { }
