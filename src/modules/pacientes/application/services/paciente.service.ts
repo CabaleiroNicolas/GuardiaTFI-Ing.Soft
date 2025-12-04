@@ -49,11 +49,10 @@ export class PacienteService implements IPacienteService {
     }
 
     if (newPaciente.numeroAfiliado && newPaciente.obraSocial) {
-      
       const obraSocial = await this.obraSocialServ.buscar(newPaciente.obraSocial);
       afiliado = await this.afiliadoServ.buscar(newPaciente.numeroAfiliado);
 
-      await this.comprobarAfiliado(afiliado, obraSocial);
+      await this.comprobarAfiliado(afiliado, obraSocial, newPaciente.cuil);
     }
 
     const paciente: Paciente = new Paciente(
@@ -98,7 +97,7 @@ export class PacienteService implements IPacienteService {
   }
 
   // TODO: validar que el afiliado corresponda al cuil ingresado
-  async comprobarAfiliado(afiliado: Afiliado | null, obraSocial: ObraSocial | null): Promise<void> {
+  async comprobarAfiliado(afiliado: Afiliado | null, obraSocial: ObraSocial | null, cuil: string): Promise<void> {
 
     if (obraSocial == null) {
       throw new Error("Obra social inexistente");
@@ -111,6 +110,9 @@ export class PacienteService implements IPacienteService {
     if (afiliado.obraSocial.getId() !== obraSocial.getId()) {
       throw new Error("El paciente no está afiliado a la obra social");
     }
+
+    if (afiliado.cuil !== cuil)
+      throw new Error("El número de afiliado no está vinculado al cuil");
   }
 
   async modificar(paciente: Paciente): Promise<void> {

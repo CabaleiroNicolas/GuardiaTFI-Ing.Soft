@@ -96,6 +96,7 @@ export class PacienteRepositoryPg implements IPacienteRepository {
 
     const afiliado: Afiliado = {
       numeroAfiliado: r.numero_afiliado,
+      cuil: r.cuil,
       obraSocial
     };
 

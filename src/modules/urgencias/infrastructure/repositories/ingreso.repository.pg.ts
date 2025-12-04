@@ -76,6 +76,7 @@ export class IngresoRepositoryPg implements IIngresoRepository {
     };
     const afiliado: Afiliado = {
       numeroAfiliado: r.numero_afiliado,
+      cuil: r.paciente_cuil,
       obraSocial: new ObraSocial(r.obra_social_id, "")
     };
 

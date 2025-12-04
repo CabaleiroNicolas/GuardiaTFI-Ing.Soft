@@ -40,7 +40,7 @@ describe('PacienteService', () => {
       // Arrange
       const obraSocial: ObraSocial = new ObraSocial('1', 'Obra social x');
       const paciente = crearPacienteDto(obraSocial);
-      const afiliado: Afiliado = { numeroAfiliado: paciente.numeroAfiliado, obraSocial };
+      const afiliado: Afiliado = { numeroAfiliado: paciente.numeroAfiliado, cuil: paciente.cuil, obraSocial };
       await obraSocialRepo.registrar(obraSocial);
       await afiliadoRepo.registrar(afiliado);
 
@@ -78,21 +78,35 @@ describe('PacienteService', () => {
       // Arrange
       const obraSocialAfiliada = new ObraSocial('1', 'Obra social x');
       const obraSocialNoAfiliada = new ObraSocial('2', 'Obra social y');
+      const paciente = crearPacienteDto(obraSocialNoAfiliada);
       const afiliadoExistente: Afiliado = {
         numeroAfiliado: "1",
+        cuil: paciente.cuil,
         obraSocial: obraSocialAfiliada,
       }
-      const afiliadoInexistente: Afiliado = {
-        numeroAfiliado: "1",
-        obraSocial: obraSocialNoAfiliada,
-      }
-      const paciente = crearPacienteDto(obraSocialNoAfiliada);
       await afiliadoRepo.registrar(afiliadoExistente);
       await obraSocialRepo.registrar(obraSocialAfiliada);
       await obraSocialRepo.registrar(obraSocialNoAfiliada);
 
       // Act + Assert
       await expect(service.registrar(paciente)).rejects.toThrow("El paciente no está afiliado a la obra social");
+    });
+
+    // Criterio de aceptación 4*
+    it('si el paciente tiene todos los datos mandatorios y un numero de afiliado existente al cual no está vinculado, debería notificarse un mensaje de error indicando que el paciente no esta afiliado a la obra social', async () => {
+      // Arrange
+      const obraSocialAfiliada = new ObraSocial('1', 'Obra social x');
+      const paciente = crearPacienteDto(obraSocialAfiliada);
+      const afiliadoExistente: Afiliado = {
+        numeroAfiliado: "1",
+        cuil: "20123456782",
+        obraSocial: obraSocialAfiliada,
+      }
+      await afiliadoRepo.registrar(afiliadoExistente);
+      await obraSocialRepo.registrar(obraSocialAfiliada);
+
+      // Act + Assert
+      await expect(service.registrar(paciente)).rejects.toThrow("El número de afiliado no está vinculado al cuil");
     });
 
     // Criterio de aceptación 5

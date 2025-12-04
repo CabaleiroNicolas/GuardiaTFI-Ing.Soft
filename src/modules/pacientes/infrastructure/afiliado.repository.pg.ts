@@ -19,7 +19,7 @@ export class AfiliadoRepositoryPg implements IAfiliadoRepository {
   
   async obtener(numeroAfiliado: string): Promise<Afiliado | null> {
     const result = await this.pool.query(`
-      SELECT numero_afiliado, os.id, os.nombre FROM afiliados a 
+      SELECT numero_afiliado, cuil, os.id, os.nombre FROM afiliados a 
       INNER JOIN obras_sociales os 
       ON a.obra_social_id = os.id 
       WHERE numero_afiliado = $1`, [numeroAfiliado]);
@@ -45,6 +45,6 @@ export class AfiliadoRepositoryPg implements IAfiliadoRepository {
     
     const obraSocial = new ObraSocial(r.id, r.nombre);
 
-    return { numeroAfiliado: r.numero_afiliado, obraSocial };
+    return { numeroAfiliado: r.numero_afiliado, cuil: r.cuil, obraSocial };
   }
 }
