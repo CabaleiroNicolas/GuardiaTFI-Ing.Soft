@@ -5,6 +5,7 @@ import { UserRole, UserRoleHelper } from "../domain/value-objects/user-role.enum
 import { Pool } from "pg";
 import { Enfermera } from "src/modules/urgencias/domain/entities/enfermera.entity";
 import { use } from "chai";
+import { Medico } from "src/modules/urgencias/domain/entities/medico.entity";
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -31,7 +32,7 @@ export class UserRepository implements IUserRepository {
         let user : User | null = null;
 
         const queryEnfermera = `SELECT id, cuil, email, password_hash, rol, matricula, apellido, nombre FROM enfermeras WHERE email = $1 LIMIT 1`;
-        const queryMedico = `SELECT cuil, email, password_hash, rol FROM medicos WHERE email = $1 LIMIT 1`;
+        const queryMedico = `SELECT id, cuil, email, password_hash, rol, matricula, apellido, nombre FROM medicos WHERE email = $1 LIMIT 1`;
 
         result = (await this.pool.query(queryEnfermera, [email])).rows[0];
 
@@ -54,8 +55,17 @@ export class UserRepository implements IUserRepository {
                     result.matricula
                 );
             }
-            else if (result.role === 'MEDICO') {
-                user =  new User()
+            else if (result.rol === 'MEDICO') {
+                user = new Medico(
+                    result.id,
+                    result.email,
+                    result.password_hash,
+                    UserRoleHelper.userRoleFromString(result.rol),
+                    result.cuil,
+                    result.apellido,
+                    result.nombre,
+                    result.matricula
+                );
             }
         }
         console.log("usuario encontrado en repo:", user);
