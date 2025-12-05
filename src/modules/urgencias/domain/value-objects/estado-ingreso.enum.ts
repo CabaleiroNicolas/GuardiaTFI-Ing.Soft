@@ -1,5 +1,5 @@
 export enum EstadoIngreso {
   PENDIENTE = 'PENDIENTE',
-  EN_PROCESO = 'EN_PROCESO',
+  EN_PROCESO = 'EN PROCESO',
   FINALIZADO = 'FINALIZADO'
 }

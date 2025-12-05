@@ -39,13 +39,28 @@ CREATE TABLE IF NOT EXISTS afiliados (
 );
 
 -- ==========================================================
+-- TABLA USUARIOS (MEDICOS Y ENFERMERAS)
+-- ==========================================================
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id SERIAL PRIMARY KEY,
+    matricula VARCHAR(20) UNIQUE NOT NULL,
+    cuil VARCHAR(11) UNIQUE NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    rol VARCHAR(20) NOT NULL CHECK (rol IN ('MEDICO', 'ENFERMERA'))
+);
+
+-- ==========================================================
 -- TABLA INGRESOS
 -- ==========================================================
 CREATE TABLE IF NOT EXISTS ingresos (
     id SERIAL PRIMARY KEY,
 
     paciente_id INTEGER NOT NULL REFERENCES pacientes(id) ON DELETE CASCADE,
-    enfermera_id INTEGER NOT NULL REFERENCES enfermeras(id) ON DELETE SET NULL,
+    enfermera_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE SET NULL,
 
     fecha_ingreso TIMESTAMP NOT NULL DEFAULT NOW(),
     informe TEXT NOT NULL,
@@ -68,21 +83,6 @@ CREATE TABLE IF NOT EXISTS ingresos (
 -- ==========================================================
 CREATE INDEX IF NOT EXISTS idx_ingresos_nivel ON ingresos (nivel_emergencia);
 CREATE INDEX IF NOT EXISTS idx_ingresos_fecha ON ingresos (fecha_ingreso);
-
--- ==========================================================
--- TABLA MEDICOS
--- ==========================================================
-
-CREATE TABLE IF NOT EXISTS usuarios (
-    id SERIAL PRIMARY KEY,
-    matricula VARCHAR(20) UNIQUE NOT NULL,
-    cuil VARCHAR(11) UNIQUE NOT NULL,
-    nombre VARCHAR(50) NOT NULL,
-    apellido VARCHAR(50) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    rol VARCHAR(20) NOT NULL CHECK (rol IN ('MEDICO', 'ENFERMERA'))
-);
 
 -- ==========================================================
 -- DATOS INICIALES (Uso de ON CONFLICT DO NOTHING)

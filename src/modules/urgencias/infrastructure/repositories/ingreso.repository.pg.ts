@@ -19,23 +19,25 @@ export class IngresoRepositoryPg implements IIngresoRepository {
     private readonly pool: Pool
   ) { }
   
-  modificar(ingreso: Ingreso): Promise<void> {
-    throw new Error("Method not implemented.");
+  async modificarEstado(ingresoId: number, nuevoEstado: EstadoIngreso): Promise<void> {
+    const query = `UPDATE ingresos SET estado = $1 WHERE id = $2`;
+    await this.pool.query(query, [nuevoEstado, ingresoId]);
   }
 
-  async obtenerTodos(estado?: EstadoIngreso): Promise<Ingreso[]> {
+  async obtenerTodos(estado: EstadoIngreso): Promise<Ingreso[]> {
     const result = await this.pool.query(
       `SELECT i.id, i.fecha_ingreso, i.nivel_emergencia, i.estado, 
         p.cuil AS paciente_cuil, p.nombre AS paciente_nombre, p.apellido AS paciente_apellido, 
         p.calle AS paciente_calle, p.numero_direccion, p.localidad as paciente_localidad, 
         p.numero_afiliado, p.obra_social_id, 
         informe, temperatura, frecuencia_cardiaca, frecuencia_respiratoria, tension_arterial, 
-        e.nombre AS enfermera_nombre, e.apellido AS enfermera_apellido, 
+        e.id AS userId, e.nombre AS enfermera_nombre, e.apellido AS enfermera_apellido, 
         e.matricula AS enfermera_matricula, e.cuil AS enfermera_cuil
         FROM ingresos i 
         INNER JOIN pacientes p ON p.id = i.paciente_id 
-        INNER JOIN enfermeras e ON e.id = i.enfermera_id 
-        ORDER BY i.fecha_ingreso DESC`);
+        INNER JOIN usuarios e ON e.id = i.enfermera_id
+        WHERE i.estado = $1
+        ORDER BY i.fecha_ingreso DESC`,[estado]);
 
     let ingresos: Ingreso[] = [];
     
@@ -48,7 +50,7 @@ export class IngresoRepositoryPg implements IIngresoRepository {
   }
 
   async registrar(ingreso: Ingreso): Promise<void> {
-    const query = `INSERT INTO ingresos ( paciente_id, enfermera_id, informe, nivel_emergencia, temperatura, frecuencia_cardiaca, frecuencia_respiratoria, tension_arterial, estado) 
+    const query = `INSERT INTO ingresos (paciente_id, enfermera_id, informe, nivel_emergencia, temperatura, frecuencia_cardiaca, frecuencia_respiratoria, tension_arterial, estado) 
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`;
 
     const signosVitales = ingreso.getSignosVitales();
@@ -98,6 +100,6 @@ export class IngresoRepositoryPg implements IIngresoRepository {
     const enfermera = new Enfermera(r.userId, "null", "null", UserRole.ENFERMERA, r.enfermera_cuil, r.enfermera_apellido,
       r.enfermera_nombre, r.enfermera_matricula);
       
-    return new Ingreso(paciente, enfermera, fechaIngreso, r.informe, r.nivel_emergencia, signosVitales);
+    return new Ingreso(paciente, enfermera, fechaIngreso, r.informe, r.nivel_emergencia, signosVitales, r.id);
   }
 }

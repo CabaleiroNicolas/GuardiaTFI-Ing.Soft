@@ -9,7 +9,6 @@ import { IPacienteService, PACIENTE_SERVICIO } from "src/modules/pacientes/appli
 import { Paciente } from "src/modules/pacientes/domain/entities/paciente.entity";
 import { Enfermera } from "../../domain/entities/enfermera.entity";
 import { ENFERMERA_SERVICE, IEnfermeraService } from "../ports/enfermera-service.interface";
-import { UserRole } from "src/modules/user/domain/value-objects/user-role.enum";
 
 @Injectable()
 export class IngresoService implements IIngresoService {
@@ -86,29 +85,45 @@ export class IngresoService implements IIngresoService {
     return this.ordenarIngresosEnEspera(colaPacientes);
   }
 
-  private ordenarIngresosEnEspera(colaIngresos: Ingreso[]) {
-  return colaIngresos.sort((ingreso1, ingreso2) => {
-    
-    const nivel1 = this.ordenNivelesEmergencia.indexOf(ingreso1.getNivelEmergencia());
-    const nivel2 = this.ordenNivelesEmergencia.indexOf(ingreso2.getNivelEmergencia());
-
-    const diferenciaPrioridad = nivel1 - nivel2;
-
-    if (diferenciaPrioridad !== 0) {
-      return diferenciaPrioridad;
+  async reclamarPaciente(): Promise<Ingreso> {
+    const ingresosEnEspera: Ingreso[] = await this.obtenerIngresosEnEspera();
+    if (ingresosEnEspera.length === 0) {
+      throw new Error("No hay pacientes en espera para ser reclamados");
     }
 
-    const fecha1 = new Date(ingreso1.getFechaIngreso()).getTime();
-    const fecha2 = new Date(ingreso2.getFechaIngreso()).getTime();
+    const ingresoReclamado: Ingreso = ingresosEnEspera[0];
+    await this.ingresoRepo.modificarEstado(ingresoReclamado.getId(), EstadoIngreso.EN_PROCESO);
+    return ingresoReclamado;
+  }
 
-    return fecha1 - fecha2;
-  });
-}
+  async traerUltimoReclamado(): Promise<Ingreso> {
+    return (await this.ingresoRepo.obtenerTodos(EstadoIngreso.EN_PROCESO))[0];
+  }
+
+
+  private ordenarIngresosEnEspera(colaIngresos: Ingreso[]) {
+    return colaIngresos.sort((ingreso1, ingreso2) => {
+
+      const nivel1 = this.ordenNivelesEmergencia.indexOf(ingreso1.getNivelEmergencia());
+      const nivel2 = this.ordenNivelesEmergencia.indexOf(ingreso2.getNivelEmergencia());
+
+      const diferenciaPrioridad = nivel1 - nivel2;
+
+      if (diferenciaPrioridad !== 0) {
+        return diferenciaPrioridad;
+      }
+
+      const fecha1 = new Date(ingreso1.getFechaIngreso()).getTime();
+      const fecha2 = new Date(ingreso2.getFechaIngreso()).getTime();
+
+      return fecha1 - fecha2;
+    });
+  }
 
   private async validarPacienete(cuil: string): Promise<Paciente> {
     console.log("Validando paciente con cuil:", cuil);
     const paciente = await this.pacienteService.buscar(cuil);
-    
+
     const ingresoPendiente = (await this.obtenerIngresosEnEspera()).find(ingreso => ingreso.getPaciente().getCuil() === cuil);
     if (ingresoPendiente) {
       throw new Error("El Paciente ya tiene un ingreso pendiente");

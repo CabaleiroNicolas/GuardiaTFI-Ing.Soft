@@ -17,13 +17,12 @@ export class EnfermeraRepositoryPg implements IEnfermeraRepository {
         let result: any | null = null;
         let enfermera: Enfermera | null = null;
 
-        const queryEnfermera = `SELECT id, cuil, email, rol, matricula, apellido, nombre FROM enfermeras WHERE id = $1 LIMIT 1`;
+        const queryEnfermera = `SELECT id, cuil, email, rol, matricula, apellido, nombre FROM usuarios WHERE id = $1 AND rol = 'ENFERMERA' LIMIT 1`;
 
         result = (await this.pool.query(queryEnfermera, [enfermeraId])).rows[0];
 
         if (result) {
 
-            console.log(result.rol)
             if (result.rol === 'ENFERMERA') {
                 enfermera = new Enfermera(
                     result.id,

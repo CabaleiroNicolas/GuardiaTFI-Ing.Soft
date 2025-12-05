@@ -5,6 +5,8 @@ import { SignosVitales } from "../value-objects/signos-vitales.vo";
 import { Enfermera } from "./enfermera.entity";
 
 export class Ingreso {
+  
+  private id?: number;
   private paciente: Paciente;
   private enfermera: Enfermera;
   private fechaIngreso: Date;
@@ -13,7 +15,7 @@ export class Ingreso {
   private signosVitales: SignosVitales;
   private estado: EstadoIngreso;
 
-  constructor(paciente: Paciente, enfermera: Enfermera, fechaIngreso: Date, informe: string, nivelEmergencia: NivelEmergencia, signosVitales: SignosVitales) {
+  constructor(paciente: Paciente, enfermera: Enfermera, fechaIngreso: Date, informe: string, nivelEmergencia: NivelEmergencia, signosVitales: SignosVitales, id?: number) {
     this.paciente = paciente;
     this.enfermera = enfermera;
     this.fechaIngreso = fechaIngreso;
@@ -21,13 +23,18 @@ export class Ingreso {
     this.nivelEmergencia = nivelEmergencia;
     this.signosVitales = signosVitales;
     this.estado = EstadoIngreso.PENDIENTE;
+    this.id = id;
   }
-   
+
+  getId(): number {
+    return this.id!;
+  }
+
   getPaciente(): Paciente {
     return this.paciente;
   }
-  
-   getEnfermera(): Enfermera {
+
+  getEnfermera(): Enfermera {
     return this.enfermera;
   }
 
