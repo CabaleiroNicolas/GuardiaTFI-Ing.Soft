@@ -22,8 +22,8 @@ export class IngresoRepositoryMock implements IIngresoRepository {
     throw new Error("Method not implemented.");
   }
 
-  
-  marcarAtendido(ingresoId: number, atencionId: number): unknown {
+
+  marcarAtendido(ingresoId: number, atencionId: number): Promise<void> {
     throw new Error("Method not implemented.");
   }
 }

@@ -75,8 +75,8 @@ export class IngresoRepositoryPg implements IIngresoRepository {
     console.log("ingresoId:", ingresoId, "atencionId:", atencionId);
     await this.pool.query(
       `UPDATE ingresos 
-       SET estado = 'EN PROCESO', atencion_id = $1 
-       WHERE id = $2`, [atencionId, ingresoId]);
+       SET estado = $1, atencion_id = $2 
+       WHERE id = $3`, [EstadoIngreso.FINALIZADO, atencionId, ingresoId]);
   }
 
   private construirIngreso(r: any): Ingreso {
