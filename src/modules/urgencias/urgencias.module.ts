@@ -12,7 +12,7 @@ import { EnfermeraRepositoryPg } from './infrastructure/repositories/enfermera.r
 import { MEDICO_REPOSITORIO } from './application/ports/medico-repository.interface';
 import { MEDICO_SERVICIO } from './application/ports/medico-service.interface';
 import { MedicoRepositoryPg } from './infrastructure/repositories/medico.repository.pg';
-import { MedicoService } from './application/services/medio.service';
+import { MedicoService } from './application/services/medico.service';
 
 @Module({
     controllers: [UrgenciasController],

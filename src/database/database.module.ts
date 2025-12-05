@@ -51,7 +51,7 @@ export class DatabaseModule implements OnApplicationBootstrap {
 
   private async executeInitScript() {
 
-    const initScriptPath = path.resolve(__dirname, '..', '..', 'database', 'schema', '000_schema_inicial.sql');
+    const initScriptPath = path.resolve(__dirname, '..', '..', 'dist', 'database', 'schema', '000_schema_inicial.sql');
     
     let sqlScript: string;
     try {
