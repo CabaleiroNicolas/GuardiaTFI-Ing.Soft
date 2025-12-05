@@ -5,11 +5,11 @@ import { EstadoIngreso } from "src/modules/urgencias/domain/value-objects/estado
 export class IngresoRepositoryMock implements IIngresoRepository {
   
   private ingresosEnEspera: Ingreso[] = [];
-
+  
   async modificar(ingreso: Ingreso): Promise<void> {
     throw new Error("No implementado");
   }
-
+  
   async obtenerTodos(estado: EstadoIngreso = EstadoIngreso.PENDIENTE): Promise<Ingreso[]> {
     return this.ingresosEnEspera.filter(i => i.getEstado() == estado);
   }
@@ -19,6 +19,11 @@ export class IngresoRepositoryMock implements IIngresoRepository {
   }
 
   modificarEstado(ingresoId: number, nuevoEstado: EstadoIngreso): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  
+  marcarAtendido(ingresoId: number, atencionId: number): unknown {
     throw new Error("Method not implemented.");
   }
 }

@@ -15,8 +15,11 @@ Proyecto final para la catedra Ingenieria de Software - UTN-FRT - 4K2
 ## Run tests
 
 ```bash
-# correr test de Cucumber (aceptación)
+# correr tests de Cucumber (aceptación)
 $ npm run test:bdd
+
+# correr tests unitarios
+$ npm run test:unit
 ```
 
 ## Project setup
