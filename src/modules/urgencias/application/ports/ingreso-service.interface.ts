@@ -9,4 +9,5 @@ export interface IIngresoService {
   obtenerIngresosEnEspera(): Promise<Ingreso[]>;
   reclamarPaciente(): Promise<Ingreso>;
   traerUltimoReclamado(): Promise<Ingreso>;
+  marcarAtendido(ingresoId: number, atencionId: number): Promise<void>;
 }

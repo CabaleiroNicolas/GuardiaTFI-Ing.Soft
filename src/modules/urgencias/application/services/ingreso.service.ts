@@ -100,6 +100,10 @@ export class IngresoService implements IIngresoService {
     return (await this.ingresoRepo.obtenerTodos(EstadoIngreso.EN_PROCESO))[0];
   }
 
+  async marcarAtendido(ingresoId: number, atencionId: number): Promise<void> {
+    await this.ingresoRepo.marcarAtendido(ingresoId, atencionId);
+  }
+
 
   private ordenarIngresosEnEspera(colaIngresos: Ingreso[]) {
     return colaIngresos.sort((ingreso1, ingreso2) => {

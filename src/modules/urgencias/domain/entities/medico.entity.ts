@@ -31,4 +31,8 @@ export class Medico extends User {
   getMatricula(): string {
     return this.matricula;
   }
+  
+  getId(): number {
+    return this.getId();
+  }
 }

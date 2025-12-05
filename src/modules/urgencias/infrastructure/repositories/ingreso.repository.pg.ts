@@ -70,6 +70,13 @@ export class IngresoRepositoryPg implements IIngresoRepository {
     ]);
   }
 
+  async marcarAtendido(ingresoId: number, atencionId: number): Promise<void> {
+    await this.pool.query(
+      `UPDATE ingresos 
+       SET estado = 'EN PROCESO', atencion_id = $1 
+       WHERE id = $2`, [atencionId, ingresoId]);
+  }
+
   private construirIngreso(r: any): Ingreso {
     const domicilio: Domicilio = {
       calle: r.paciente_calle,

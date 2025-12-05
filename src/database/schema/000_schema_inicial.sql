@@ -54,6 +54,18 @@ CREATE TABLE IF NOT EXISTS usuarios (
 );
 
 -- ==========================================================
+-- TABLA ATENCIONES
+-- ==========================================================
+
+CREATE TABLE IF NOT EXISTS atenciones (
+    id SERIAL PRIMARY KEY,
+    informe TEXT NOT NULL,
+    medico_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE SET NULL,
+    fecha_atencion TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+
+-- ==========================================================
 -- TABLA INGRESOS
 -- ==========================================================
 CREATE TABLE IF NOT EXISTS ingresos (
@@ -77,17 +89,6 @@ CREATE TABLE IF NOT EXISTS ingresos (
 
     -- Estado del ingreso
     estado VARCHAR(20) NOT NULL CHECK (estado IN ('PENDIENTE','EN PROCESO','FINALIZADO'))
-);
-
--- ==========================================================
--- TABLA ATENCIONES
--- ==========================================================
-
-CREATE TABLE IF NOT EXISTS atenciones (
-    id SERIAL PRIMARY KEY,
-    informe TEXT NOT NULL,
-    medico_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE SET NULL,
-    fecha_atencion TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- ==========================================================

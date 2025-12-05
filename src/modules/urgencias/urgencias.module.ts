@@ -12,7 +12,11 @@ import { EnfermeraRepositoryPg } from './infrastructure/repositories/enfermera.r
 import { MEDICO_REPOSITORIO } from './application/ports/medico-repository.interface';
 import { MEDICO_SERVICIO } from './application/ports/medico-service.interface';
 import { MedicoRepositoryPg } from './infrastructure/repositories/medico.repository.pg';
-import { MedicoService } from './application/services/medio.service';
+import { MedicoService } from './application/services/medico.service';
+import { ATENCION_REPOSITORIO } from './application/ports/atencion-repository.interface';
+import { AtencionService } from './application/services/atencion.service';
+import { ATENCION_SERVICIO } from './application/ports/atencion-service.interface';
+import { AtencionRepositoryPg } from './infrastructure/repositories/atencion.repository.pg';
 
 @Module({
     controllers: [UrgenciasController],
@@ -42,7 +46,15 @@ import { MedicoService } from './application/services/medio.service';
             provide: MEDICO_SERVICIO,
             useClass: MedicoService,
         },
+        {
+            provide: ATENCION_REPOSITORIO,
+            useClass: AtencionRepositoryPg,
+        },
+        {
+            provide: ATENCION_SERVICIO,
+            useClass: AtencionService,
+        }
     ],
-    exports: [INGRESO_SERVICIO, ENFERMERA_SERVICE, MEDICO_SERVICIO]
+    exports: [INGRESO_SERVICIO, ENFERMERA_SERVICE, MEDICO_SERVICIO, ATENCION_SERVICIO],
 })
 export class UrgenciasModule { }
