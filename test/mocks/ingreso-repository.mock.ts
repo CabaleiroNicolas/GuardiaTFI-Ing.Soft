@@ -17,4 +17,8 @@ export class IngresoRepositoryMock implements IIngresoRepository {
   async registrar(ingreso: Ingreso): Promise<void> {
     this.ingresosEnEspera.push(ingreso);
   }
+
+  modificarEstado(ingresoId: number, nuevoEstado: EstadoIngreso): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 }
