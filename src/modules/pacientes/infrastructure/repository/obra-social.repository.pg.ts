@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { IObraSocialRepository } from "../application/ports/obra-social-repository.interface";
-import { ObraSocial } from "../domain/entities/obra-social.entity";
 import { Pool } from "pg";
+import { IObraSocialRepository } from "../../application/ports/obra-social-repository.interface";
+import { ObraSocial } from "../../domain/entities/obra-social.entity";
 
 @Injectable()
 export class ObraSocialRepositoryPg implements IObraSocialRepository {

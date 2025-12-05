@@ -37,17 +37,12 @@ export class UserService implements IUserService {
     if (!user) {
       return null;
     }
-
     const { password, ...safe } = user;
-
     return safe;
-
   }
 
-  // Para login: incluye el passwordHash (select:false en la entidad)
   async findWithPasswordByEmail(email: string): Promise<User | null> {
     return this.userRepo.findByEmail(email);
-
   }
 
 }
