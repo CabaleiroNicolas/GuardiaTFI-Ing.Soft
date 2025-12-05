@@ -33,6 +33,6 @@ export class Medico extends User {
   }
   
   getId(): number {
-    return this.getId();
+    return this.userId;
   }
 }

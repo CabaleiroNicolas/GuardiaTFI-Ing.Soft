@@ -71,6 +71,8 @@ export class IngresoRepositoryPg implements IIngresoRepository {
   }
 
   async marcarAtendido(ingresoId: number, atencionId: number): Promise<void> {
+
+    console.log("ingresoId:", ingresoId, "atencionId:", atencionId);
     await this.pool.query(
       `UPDATE ingresos 
        SET estado = 'EN PROCESO', atencion_id = $1 

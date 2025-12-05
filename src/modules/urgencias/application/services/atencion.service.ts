@@ -22,9 +22,9 @@ export class AtencionService implements IAtencionService {
     async registrarAtencion(atencionDto: RegistrarAtencionDto, medicoId: number): Promise<void> {
 
         const medico: Medico = await this.medicoService.buscarPorId(medicoId);
-        const atencion: Atencion = new Atencion(atencionDto.informe, medico, new Date(Date.now()));
+        const atencion: Atencion = new Atencion(atencionDto.informe, medico);
 
-        const atencionId: number = Number(await this.atencionRepository.registrarAtencion(atencion));
+        const atencionId: number = await this.atencionRepository.registrarAtencion(atencion);
         await this.ingresoService.marcarAtendido(atencionDto.ingresoId, atencionId);
     }
 }

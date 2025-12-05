@@ -4,5 +4,5 @@ export const ATENCION_REPOSITORIO = Symbol('ATENCION_REPOSITORIO');
 
 export interface IAtencionRepository {
 
-    registrarAtencion(atencion: Atencion): Promise<void>;
+    registrarAtencion(atencion: Atencion): Promise<number>;
 }

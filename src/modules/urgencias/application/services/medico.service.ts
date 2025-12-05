@@ -14,7 +14,7 @@ export class MedicoService implements IMedicoService {
     ) { }
 
     async buscarPorId(medicoId: number): Promise<Medico> {
-        this.logger.log("Buscando medico por ID en servicio:", medicoId);
+        this.logger.log("Buscando medico por ID en servicio:");
 
         const medico: Medico | null = await this.medicoRepository.buscarPorId(medicoId);
         if (!medico) {
