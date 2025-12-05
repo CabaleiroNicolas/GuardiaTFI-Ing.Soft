@@ -1,8 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { IAfiliadoRepository } from "../application/ports/afiliado-repository.interface";
-import { Afiliado } from "../domain/value-objects/afiliado.vo";
 import { Pool } from "pg";
-import { ObraSocial } from "../domain/entities/obra-social.entity";
+import { Afiliado } from "../../domain/value-objects/afiliado.vo";
+import { IAfiliadoRepository } from "../../application/ports/afiliado-repository.interface";
+import { ObraSocial } from "../../domain/entities/obra-social.entity";
+
 
 @Injectable()
 export class AfiliadoRepositoryPg implements IAfiliadoRepository {

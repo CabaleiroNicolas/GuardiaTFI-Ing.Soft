@@ -1,10 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { IPacienteRepository } from "../application/ports/paciente-repository.interface";
-import { Paciente } from "../domain/entities/paciente.entity";
+import { Paciente } from "../../domain/entities/paciente.entity";
+import { IPacienteRepository } from "../../application/ports/paciente-repository.interface";
 import { Pool } from "pg";
-import { ObraSocial } from "../domain/entities/obra-social.entity";
-import { Afiliado } from "../domain/value-objects/afiliado.vo";
-import { Domicilio } from "../domain/value-objects/domicilio.vo";
+import { Domicilio } from "../../domain/value-objects/domicilio.vo";
+import { ObraSocial } from "../../domain/entities/obra-social.entity";
+import { Afiliado } from "../../domain/value-objects/afiliado.vo";
 
 @Injectable()
 export class PacienteRepositoryPg implements IPacienteRepository {
