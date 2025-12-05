@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS ingresos (
 
     paciente_id INTEGER NOT NULL REFERENCES pacientes(id) ON DELETE CASCADE,
     enfermera_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE SET NULL,
+    atencion_id INTEGER REFERENCES atenciones(id) ON DELETE SET NULL,
 
     fecha_ingreso TIMESTAMP NOT NULL DEFAULT NOW(),
     informe TEXT NOT NULL,
@@ -76,6 +77,17 @@ CREATE TABLE IF NOT EXISTS ingresos (
 
     -- Estado del ingreso
     estado VARCHAR(20) NOT NULL CHECK (estado IN ('PENDIENTE','EN PROCESO','FINALIZADO'))
+);
+
+-- ==========================================================
+-- TABLA ATENCIONES
+-- ==========================================================
+
+CREATE TABLE IF NOT EXISTS atenciones (
+    id SERIAL PRIMARY KEY,
+    informe TEXT NOT NULL,
+    medico_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE SET NULL,
+    fecha_atencion TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- ==========================================================
