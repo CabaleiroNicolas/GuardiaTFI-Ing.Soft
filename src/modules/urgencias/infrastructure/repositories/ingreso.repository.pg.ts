@@ -26,7 +26,7 @@ export class IngresoRepositoryPg implements IIngresoRepository {
 
   async obtenerTodos(estado: EstadoIngreso): Promise<Ingreso[]> {
     const result = await this.pool.query(
-      `SELECT i.id, i.fecha_ingreso, i.nivel_emergencia, i.estado, 
+      `SELECT i.id, (i.fecha_ingreso AT TIME ZONE 'UTC' AT TIME ZONE 'America/Argentina/Buenos_Aires') AS fecha_ingreso, i.nivel_emergencia, i.estado, 
         p.cuil AS paciente_cuil, p.nombre AS paciente_nombre, p.apellido AS paciente_apellido, 
         p.calle AS paciente_calle, p.numero_direccion, p.localidad as paciente_localidad, 
         p.numero_afiliado, p.obra_social_id, 
@@ -91,7 +91,7 @@ export class IngresoRepositoryPg implements IIngresoRepository {
       obraSocial: new ObraSocial(r.obra_social_id, "")
     };
 
-    const fechaIngreso = new Date(r.fecha_ingreso);
+    const fechaIngreso = r.fecha_ingreso;
     const tensionArterial: TensionArterial = {
       frecDiastolica: r.tension_arterial.split('/')[0],
       frecSistolica: r.tension_arterial.split('/')[1]

@@ -21,7 +21,10 @@ export class AtencionRepositoryPg implements IAtencionRepository {
             u_med.apellido AS medico_apellido,
             u_enf.nombre AS enfermera_nombre,
             u_enf.apellido AS enfermera_apellido,
-            a.fecha_atencion
+            (a.fecha_atencion AT TIME ZONE 'UTC' AT TIME ZONE 'America/Argentina/Buenos_Aires') AS fecha_atencion,
+            p.nombre AS paciente_nombre,
+            p.apellido AS paciente_apellido,
+            p.cuil AS paciente_cuil
         FROM
             atenciones a
         INNER JOIN
@@ -29,7 +32,9 @@ export class AtencionRepositoryPg implements IAtencionRepository {
         INNER JOIN
             ingresos i ON i.atencion_id = a.id
         INNER JOIN
-            usuarios u_enf ON i.enfermera_id = u_enf.id;`;
+            usuarios u_enf ON i.enfermera_id = u_enf.id
+        INNER JOIN 
+        pacientes p ON i.paciente_id = p.id;`;
         const queryResult = (await this.pool.query(query)).rows;
 
         return queryResult.map(row => ({
@@ -39,6 +44,9 @@ export class AtencionRepositoryPg implements IAtencionRepository {
             medico_apellido: row.medico_apellido,
             enfermera_nombre: row.enfermera_nombre,
             enfermera_apellido: row.enfermera_apellido,
+            paciente_nombre: row.paciente_nombre,
+            paciente_apellido: row.paciente_apellido,
+            paciente_cuil: row.paciente_cuil,
             fecha_atencion: row.fecha_atencion,
         } as AtencionDto));
 
