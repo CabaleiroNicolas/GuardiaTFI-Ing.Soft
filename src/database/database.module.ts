@@ -2,19 +2,21 @@ import { Module, Global, OnApplicationBootstrap, Inject, Logger } from '@nestjs/
 import { Pool } from 'pg';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ConfigService } from '@nestjs/config';
 
 @Global()
 @Module({
   providers: [
     {
       provide: 'PG_POOL',
-      useFactory: async () => {
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
         return new Pool({
-          user: 'test',
-          host: 'localhost',
-          database: 'guardia_db',
-          password: 'test',
-          port: 5432,
+          user: configService.get<string>('DB_USER') || 'postgres',
+          host: configService.get<string>('DB_HOST') || 'localhost',
+          database: configService.get<string>('DB_NAME') || 'guardia_db',
+          password: configService.get<string>('DB_PASSWORD') || 'test',
+          port: configService.get<number>('DB_PORT') || 5432,
         });
       },
     },
