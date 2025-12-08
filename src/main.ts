@@ -16,26 +16,9 @@ async function bootstrap() {
   const allowedOrigin = process.env.CORS_ORIGIN || '*';
 
   app.enableCors({
-    origin: (requestOrigin, callback) => {
-      if (!requestOrigin) {
-        return callback(null, true);
-      }
-      console.log(`[CORS] Request desde: '${requestOrigin}'`);
-      console.log(`[CORS] Esperado:      '${allowedOrigin}'`);
-
-      const cleanRequest = requestOrigin.replace(/\/$/, ''); // Quita barra final si existe
-      const cleanAllowed = (allowedOrigin || '').replace(/\/$/, ''); // Quita barra final si existe
-
-      if (cleanRequest === cleanAllowed) {
-        callback(null, true);
-      } else {
-        console.warn(`[CORS] ⛔ Bloqueado. No coinciden.`);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
-    allowedHeaders: 'Content-Type, Accept, Authorization',
+    credentials: true,,
   });
 
   const port = process.env.PORT || 3000;
