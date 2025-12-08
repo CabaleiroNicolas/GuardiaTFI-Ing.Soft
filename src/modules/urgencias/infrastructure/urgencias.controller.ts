@@ -105,12 +105,30 @@ export class UrgenciasController {
   async registrarAtencion(@Res() res, @Body() dto: RegistrarAtencionDto, @Req() req?: AuthenticatedRequestVO) {
 
     try {
-      this.logger.log("Nueva solicitud para obtener ultimo reclamo");
+      this.logger.log("Nueva solicitud para registrar atencion");
       await this.atencionService.registrarAtencion(dto, req!.user.userId);
       res.status(201).send({ message: 'Atención registrada con éxito' });
 
     } catch (error) {
       this.logger.error("Error al registrar atención:", error.message);
+      res.status(400).send({ message: `Error con entidad: ${error.message}` });
+
+    }
+  }
+
+
+  @Get('atencion')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.MEDICO)
+  async obtenerAtenciones(@Res() res) {
+
+    try {
+      this.logger.log("Nueva solicitud para obtener atenciones");
+      const atenciones = await this.atencionService.obtenerAtenciones();
+      res.status(200).send(atenciones);
+
+    } catch (error) {
+      this.logger.error("Error al obtener atenciones:", error.message);
       res.status(400).send({ message: `Error con entidad: ${error.message}` });
 
     }

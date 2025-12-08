@@ -6,6 +6,7 @@ import { IMedicoService, MEDICO_SERVICIO } from "../ports/medico-service.interfa
 import { Medico } from "../../domain/entities/medico.entity";
 import { IIngresoService, INGRESO_SERVICIO } from "../ports/ingreso-service.interface";
 import { Atencion } from "../../domain/entities/atencion.entity";
+import { AtencionDto } from "../../domain/value-objects/atencion.dto";
 
 @Injectable()
 export class AtencionService implements IAtencionService {
@@ -26,5 +27,9 @@ export class AtencionService implements IAtencionService {
 
         const atencionId: number = await this.atencionRepository.registrarAtencion(atencion);
         await this.ingresoService.marcarAtendido(atencionDto.ingresoId, atencionId);
+    }
+
+    async obtenerAtenciones(): Promise<AtencionDto[]> {
+        return await this.atencionRepository.obtenerAtenciones();
     }
 }
