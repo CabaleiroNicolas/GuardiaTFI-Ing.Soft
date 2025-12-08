@@ -96,7 +96,6 @@ export class PacienteService implements IPacienteService {
     }
   }
 
-  // TODO: validar que el afiliado corresponda al cuil ingresado
   async comprobarAfiliado(afiliado: Afiliado | null, obraSocial: ObraSocial | null, cuil: string): Promise<void> {
 
     if (obraSocial == null) {
