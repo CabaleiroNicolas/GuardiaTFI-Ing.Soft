@@ -128,7 +128,9 @@ export class IngresoService implements IIngresoService {
     console.log("Validando paciente con cuil:", cuil);
     const paciente = await this.pacienteService.buscar(cuil);
 
+    console.log(await this.ingresoRepo.obtenerPacientesEnEsperaOEnProceso())
     const ingresoPendiente = (await this.ingresoRepo.obtenerPacientesEnEsperaOEnProceso()).find(pacienteCuil => pacienteCuil === cuil);
+
     if (ingresoPendiente) {
       throw new Error("El Paciente ya tiene un ingreso pendiente o en proceso");
     }

@@ -21,13 +21,13 @@ export class IngresoRepositoryPg implements IIngresoRepository {
 
   async obtenerPacientesEnEsperaOEnProceso(): Promise<string[]> {
     const result = await this.pool.query(
-      `SELECT paciente_cuil
+      `SELECT p.cuil AS cuil
         FROM ingresos i 
         INNER JOIN pacientes p ON p.id = i.paciente_id 
         WHERE i.estado = 'PENDIENTE' OR i.estado = 'EN PROCESO'
       `);
 
-    return result.rows.map(p => p.paciente_cuil);
+    return result.rows.map(p => p.cuil);
   }
   
   async modificarEstado(ingresoId: number, nuevoEstado: EstadoIngreso): Promise<void> {
