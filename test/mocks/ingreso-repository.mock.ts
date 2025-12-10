@@ -4,6 +4,10 @@ import { EstadoIngreso } from "src/modules/urgencias/domain/value-objects/estado
 
 export class IngresoRepositoryMock implements IIngresoRepository {
   
+  async obtenerPacientesEnEsperaOEnProceso(): Promise<string[]> {
+    return (await this.obtenerTodos()).map(i => i.getPaciente().getCuil());
+  }
+  
   private ingresosEnEspera: Ingreso[] = [];
   
   async modificar(ingreso: Ingreso): Promise<void> {

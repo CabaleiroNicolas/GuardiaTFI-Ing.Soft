@@ -114,7 +114,7 @@ describe("PacienteService", () => {
 
     // Act + Assert
     await expect(service.registrar(dto))
-      .rejects.toThrow("El número de afiliado no está vinculado al cuil");
+      .rejects.toThrow("El Número de Afiliado no está vinculado al cuil");
   });
 
   // ==========================
@@ -135,7 +135,7 @@ describe("PacienteService", () => {
 
     // Act + Assert
     await expect(service.registrar(dto))
-      .rejects.toThrow("El paciente no está afiliado a la obra social");
+      .rejects.toThrow("El paciente no está afiliado a la Obra Social");
   });
 
   // ==========================
