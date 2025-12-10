@@ -4,6 +4,7 @@ import { EstadoIngreso } from "../../domain/value-objects/estado-ingreso.enum";
 export const INGRESO_REPOSITORIO = Symbol('INGRESO_REPOSITORIO');
 
 export interface IIngresoRepository {
+  obtenerPacientesEnEsperaOEnProceso(): Promise<string[]>;
   marcarAtendido(ingresoId: number, atencionId: number): Promise<void>;
   modificarEstado(ingresoId: number, nuevoEstado: EstadoIngreso): Promise<void>;
   obtenerTodos(estado: EstadoIngreso): Promise<Ingreso[]>;

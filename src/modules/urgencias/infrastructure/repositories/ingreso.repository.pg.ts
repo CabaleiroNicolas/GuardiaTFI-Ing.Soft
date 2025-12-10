@@ -18,6 +18,17 @@ export class IngresoRepositoryPg implements IIngresoRepository {
     @Inject('PG_POOL')
     private readonly pool: Pool
   ) { }
+
+  async obtenerPacientesEnEsperaOEnProceso(): Promise<string[]> {
+    const result = await this.pool.query(
+      `SELECT paciente_cuil
+        FROM ingresos i 
+        INNER JOIN pacientes p ON p.id = i.paciente_id 
+        WHERE i.estado = 'PENDIENTE' OR i.estado = 'EN PROCESO'
+      `);
+
+    return result.rows.map(p => p.paciente_cuil);
+  }
   
   async modificarEstado(ingresoId: number, nuevoEstado: EstadoIngreso): Promise<void> {
     const query = `UPDATE ingresos SET estado = $1 WHERE id = $2`;

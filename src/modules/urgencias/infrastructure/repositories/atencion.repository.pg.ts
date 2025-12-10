@@ -34,7 +34,8 @@ export class AtencionRepositoryPg implements IAtencionRepository {
         INNER JOIN
             usuarios u_enf ON i.enfermera_id = u_enf.id
         INNER JOIN 
-        pacientes p ON i.paciente_id = p.id;`;
+        pacientes p ON i.paciente_id = p.id
+        ORDER BY fecha_atencion DESC;`;
         const queryResult = (await this.pool.query(query)).rows;
 
         return queryResult.map(row => ({
