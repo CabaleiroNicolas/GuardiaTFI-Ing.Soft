@@ -103,15 +103,15 @@ export class PacienteService implements IPacienteService {
     }
 
     if (afiliado == null) {
-      throw new Error("Número de afiliado inexistente");
+      throw new Error("Número de Afiliado inexistente");
     }
 
     if (afiliado.obraSocial.getId() !== obraSocial.getId()) {
-      throw new Error("El paciente no está afiliado a la obra social");
+      throw new Error("El paciente no está afiliado a la Obra Social");
     }
 
     if (afiliado.cuil !== cuil)
-      throw new Error("El número de afiliado no está vinculado al cuil");
+      throw new Error("El Número de Afiliado no está vinculado al cuil");
   }
 
   async modificar(paciente: Paciente): Promise<void> {

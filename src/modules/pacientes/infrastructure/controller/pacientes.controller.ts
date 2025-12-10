@@ -31,7 +31,7 @@ export class PacientesController {
       this.logger.log("Paciente registrado con éxito");
       
     } catch (error) {
-      this.logger.error("Error al registrar Paciente:", error.message);
+      this.logger.error("Error al registrar paciente:", error.message);
       res.status(400).send({ message: error.message });
     }
   }
