@@ -12,9 +12,10 @@ import { PacientesController } from "./infrastructure/controller/pacientes.contr
 import { PacienteRepositoryPg } from "./infrastructure/repository/paciente.repository.pg";
 import { ObraSocialRepositoryPg } from "./infrastructure/repository/obra-social.repository.pg";
 import { AfiliadoRepositoryPg } from "./infrastructure/repository/afiliado.repository.pg";
+import { ObraSocialController } from "./infrastructure/controller/obra-social.controller";
 
 @Module({
-  controllers: [PacientesController],
+  controllers: [PacientesController, ObraSocialController],
   providers: [
     {
       provide: PACIENTE_SERVICIO,

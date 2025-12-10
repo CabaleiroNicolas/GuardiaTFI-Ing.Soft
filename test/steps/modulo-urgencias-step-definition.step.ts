@@ -1,12 +1,9 @@
 import { Given, When, Then, Before } from '@cucumber/cucumber';
 import { expect } from 'chai'; 
 import { Enfermera } from 'src/modules/urgencias/domain/entities/enfermera.entity';
-import { Ingreso } from 'src/modules/urgencias/domain/entities/ingreso.entity';
-import { Domicilio } from 'src/modules/pacientes/domain/value-objects/domicilio.vo';
 import { NivelEmergencia, NivelEmergenciaHelper } from 'src/modules/urgencias/domain/value-objects/nivel-emergencia.enum';
 import { SignosVitales } from 'src/modules/urgencias/domain/value-objects/signos-vitales.vo';
 import { CustomWorld } from 'test/support/world';
-import { Paciente } from 'src/modules/pacientes/domain/entities/paciente.entity';
 import { PacienteDto } from 'src/modules/pacientes/domain/value-objects/paciente.dto';
 import { UserRole } from 'src/modules/user/domain/value-objects/user-role.enum';
 import { RegistrarIngresoDto } from 'src/modules/urgencias/domain/value-objects/registrar-ingreso.dto';

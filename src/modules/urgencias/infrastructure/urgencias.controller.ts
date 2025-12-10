@@ -125,7 +125,6 @@ export class UrgenciasController {
     try {
       this.logger.log("Nueva solicitud para obtener atenciones");
       const atenciones = await this.atencionService.obtenerAtenciones();
-      console.log(atenciones[0].fecha_atencion)
       res.status(200).send(atenciones);
 
     } catch (error) {

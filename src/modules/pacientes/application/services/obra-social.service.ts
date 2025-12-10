@@ -10,6 +10,10 @@ export class ObraSocialService implements IObraSocialService {
     @Inject(OBRASOCIAL_REPOSITORIO)
     private readonly obraSocialRepo: IObraSocialRepository
   ) { }
+
+  async obtenerObrasSociales(): Promise<string[]> {
+    return await this.obraSocialRepo.obtenerNombres();
+  }
   
   async buscar(nombre: string): Promise<ObraSocial | null> {
     return this.obraSocialRepo.obtener(nombre);

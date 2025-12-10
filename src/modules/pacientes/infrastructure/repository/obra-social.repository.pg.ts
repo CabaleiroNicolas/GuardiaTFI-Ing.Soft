@@ -11,6 +11,13 @@ export class ObraSocialRepositoryPg implements IObraSocialRepository {
       private readonly pool: Pool
     ) { }
 
+    
+  async obtenerNombres(): Promise<string[]> {
+    const result = await this.pool.query("SELECT nombre FROM obras_sociales");
+  
+    return result.rows.map(r => r.nombre) as string[];
+  }
+
   modificar(obraSocial: ObraSocial): Promise<void> {
     throw new Error("Method not implemented.");
   }
