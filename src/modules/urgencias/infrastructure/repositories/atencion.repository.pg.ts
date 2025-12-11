@@ -12,7 +12,6 @@ export class AtencionRepositoryPg implements IAtencionRepository {
         private readonly pool: Pool
     ) { }
 
-
     async obtenerAtenciones(): Promise<AtencionDto[]> {
         const query = `SELECT
             a.id,
