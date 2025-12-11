@@ -36,6 +36,4 @@ export class EnfermeraService implements IEnfermeraService {
         await this.enfermeraRepository.guardar(enfermera);
     }
 
-
-
 }
